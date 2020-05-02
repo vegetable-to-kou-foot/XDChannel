@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- 开启注解扫描，spring框架只管service和dao，不管controller -->
+    <context:component-scan base-package="cn.edu.xidian">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations"> <!-- PropertyPlaceholderConfigurer类中有个locations属性，接收的是一个数组，即我们可以在下面配好多个properties文件 -->
+            <array>
+                <value>classpath:jdbc.properties</value>
+            </array>
+        </property>
+    </bean>
+
+    <!-- Spring整合MyBatis框架 -->
+    <!-- 配置连接池 -->
+    <!-- 不明白这里为啥又配置一遍，或许可以直接读SqlMapConfig.xml，只是教程里没有这么干而已 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/xdc"/>
+        <property name="user" value="${username}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+    <!-- 配置SqlSessionFactory工厂 -->
+    <!-- SqlSessionFactory是DAO层最重要的工厂，它能打开一个会话（即与数据库的交互）。
+            SqlSessionFactoryBean是能够创建工厂的“工厂Bean”  -->
+    <!-- README里提到了底层可以把自己写的类交给“中间商”，高层就能直接从中间商那里拿对象，不用自己new。
+            底层的类交到中间商手上以后，也不叫类了，叫bean。
+            因此这里的<bean>标签就是将类注册到bean里，之后直接管中间商要就行。 -->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!-- 配置AccountDao接口所在包 -->
+    <!-- 注意这里的标签也叫bean，这就是把底层的类交给中间商 -->
+    <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cn.edu.xidian.dao"/>
+    </bean>
+
+
+    <!-- 配置Spring框架声明式事务管理 -->
+    <!-- 配置事务管理器，与之前配置的连接池相关联，能自动提交或回滚代码-->
+    <!-- 上面是教程原话，我也不知道具体有什么用 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 配置事务通知 -->
+    <!-- 不懂，也不影响实现 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="*" isolation="DEFAULT"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 配置AOP增强 -->
+    <!-- README里提到的AOP能增强一个方法，这里通过特定的语法，能同时增强一批方法。这个<aop:advisor>不知道是什么意思，
+            百度一下就有，但是暂时不必掌握。 -->
+    <!-- 接下来推荐按三层架构依次查看各个包 -->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* cn.edu.xidian.service.impl.*ServiceImpl.*(..))"/>
+    </aop:config>
+</beans>

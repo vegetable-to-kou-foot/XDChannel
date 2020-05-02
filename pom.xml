@@ -140,12 +140,12 @@
   <dependency>
     <groupId>com.mchange</groupId>
     <artifactId>c3p0</artifactId>
-    <version>0.9.5.2</version>
+    <version>0.9.5.4</version>
   </dependency>
 </dependencies>
 
 <build>
-  <finalName>ssm_test_01</finalName>
+  <finalName>XDChannel</finalName>
   <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
     <plugins>
       <plugin>
