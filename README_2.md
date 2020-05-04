@@ -30,6 +30,7 @@
 > 这里的安全性需要仔细考虑，但是因为功能相对独立，可以等会儿再实现。
 
     Account[aid,accName,userPswd,email]
+    AidSsid[aid,ssid]
 
 ## 个人信息CRUD
 /editProfilePic

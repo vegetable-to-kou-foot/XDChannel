@@ -14,12 +14,47 @@ public class AccountServiceImpl implements AccountService {
     private AccountDao accountDao;
 
     @Override
-    public List<Account> findAll(){
-        return accountDao.findAll();
+    public void addAccount(Account account) {
+        accountDao.addAccount(account);
     }
 
     @Override
-    public void saveAccount(Account account){
-        accountDao.saveAccount(account);
+    public void deleteAccountByEmail(String email){
+        accountDao.deleteAccountByEmail(email);
+    }
+
+    @Override
+    public void updateAccountNameByAid(String accName,Integer aid){
+        accountDao.updateAccountNameByAid(accName,aid);
+    }
+
+    @Override
+    public void updateAccountEmailByEmail(String newEmail,String oldEmail){
+        accountDao.updateAccountEmailByEmail(newEmail,oldEmail);
+    }
+
+    @Override
+    public void updateAccountPswdByEmail(String userPswd,String email){
+        accountDao.updateAccountPswdByEmail(userPswd,email);
+    }
+
+    @Override
+    public Integer findAccountAidByEmail(String email){
+        return accountDao.findAccountAidByEmail(email);
+    }
+
+    @Override
+    public List<Account> findAccountById(Integer aid){
+        return accountDao.findAccountById(aid);
+    }
+
+    @Override
+    public List<Account> findAccountByName(String accName){
+        return accountDao.findAccountByName(accName);
+    }
+
+    @Override
+    public Account findAccountByEmail(String email){
+        return accountDao.findAccountByEmail(email);
     }
 }

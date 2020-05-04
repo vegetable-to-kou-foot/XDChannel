@@ -16,9 +16,10 @@
 
 <h3>测试保存</h3>
 
-<form action="account/save" method="post">
-    姓名：<input type="text" name="name"/><br/>
-    金额：<input type="text" name="money"/><br/>
+<form action="/addAccount" method="post">
+    姓名：<input type="text" name="accName"/><br/>
+    密码：<input type="password" name="userPswd"/><br/>
+    邮箱：<input type="text" name="email"/><br/>
     <input type="submit" value="保存"/><br/>
 </form>
 

@@ -1,40 +1,50 @@
 package cn.edu.xidian.domain;
 
 public class Account {
-    private Integer id;
-    private String name;
-    private Double money;
+    private Integer aid;
+    private String accName;
+    private String userPswd;
+    private String email;
 
-    public Integer getId() {
-        return id;
+    public Integer getAid() {
+        return aid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setAid(Integer aid) {
+        this.aid = aid;
     }
 
-    public String getName() {
-        return name;
+    public String getAccName() {
+        return accName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAccName(String accName) {
+        this.accName = accName;
     }
 
-    public Double getMoney() {
-        return money;
+    public String getUserPswd() {
+        return userPswd;
     }
 
-    public void setMoney(Double money) {
-        this.money = money;
+    public void setUserPswd(String userPswd) {
+        this.userPswd = userPswd;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
     public String toString() {
         return "Account{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", money=" + money +
+                "aid=" + aid +
+                ", accName='" + accName + '\'' +
+                ", userPswd='" + userPswd + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
