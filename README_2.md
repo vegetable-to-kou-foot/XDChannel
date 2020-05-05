@@ -46,7 +46,7 @@
 > {"aid":"xxx","ssid":"xxx"}
 
     UserInfo[aid,userInfo]
-    UserSsid[aid,ssid]
+    UserSsid[aid,ssid,time]
 
 ## 用户标签CRUD
 /addUserTag
