@@ -1,10 +1,7 @@
 package cn.edu.xidian.dao;
 
 import cn.edu.xidian.domain.Account;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,19 +16,34 @@ public interface AccountDao {
     void deleteAccountByEmail(String email);
 
     @Update("update Account set accName=#{accName} where aid=#{aid}")
-    void updateAccountNameByAid(String accName,Integer aid);
+    void updateAccountNameByAid(@Param("accName") String accName, @Param("aid") Integer aid);
+
+    @Update("update Account set email=#{newEmail} where aid=#{aid}")
+    void updateAccountEmailByAid(@Param("newEmail")String newEmail,@Param("aid")int aid);
+
+    @Update("update Account set userPswd=#{userPswd} where aid=#{aid}")
+    void updateAccountPswdByAid(@Param("userPswd")String userPswd,@Param("aid")int aid);
 
     @Update("update Account set email=#{newEmail} where email=#{oldEmail}")
-    void updateAccountEmailByEmail(String newEmail,String oldEmail);
+    void updateAccountEmailByEmail(@Param("newEmail")String newEmail,@Param("oldEmail")String oldEmail);
 
     @Update("update Account set userPswd=#{userPswd} where email=#{email}")
-    void updateAccountPswdByEmail(String userPswd,String email);
+    void updateAccountPswdByEmail(@Param("userPswd")String userPswd,@Param("email")String email);
+
+    @Select("select userPswd from Account where aid=#{aid}")
+    String findAccountPswdByAid(Integer aid);
+
+    @Select("select userPswd from Account where email=#{email}")
+    String findAccountPswdByEmail(String email);
+
+    @Select("select email from Account where aid=#{aid}")
+    String findAccountEmailByAid(Integer aid);
 
     @Select("select aid from Account where email=#{email}")
     Integer findAccountAidByEmail(String email);
 
     @Select("select * from Account where aid=#{aid}")
-    List<Account> findAccountById(Integer aid);
+    List<Account> findAccountByAid(Integer aid);
 
     @Select("select * from Account where accName=#{accName}")
     List<Account> findAccountByName(String accName);

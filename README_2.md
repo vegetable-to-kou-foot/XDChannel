@@ -22,12 +22,21 @@
 >
 > 修改密码的时候要提供旧密码，因为用户离开电脑的时候，可能会有人直接以用户的身份修改密码。
 
-/editAccount/editUserEmail
+`/editAccount/editUserEmail`
 > {"aid":"xxx","ssid":"xxx","old_email":"xxx"}
 > {"aid":"xxx","ssid_2":"xxx","new_email":"xxx"}
 >
 > 修改邮箱必须先点击旧邮箱的链接进入邮箱修改页，然后输入新邮箱并点击新邮箱的链接。
 > 这里的安全性需要仔细考虑，但是因为功能相对独立，可以等会儿再实现。
+
+/login
+> {"email":"xxx","password":"xxx"}
+>
+> 因为允许重名，所以不能使用user_name登录。
+> 登录后将返回aid、ssid。
+
+/logout
+> 前端自己就能解决，cookies一删，页面一跳就行。
 
     Account[aid,accName,userPswd,email]
 
@@ -46,7 +55,7 @@
 > {"aid":"xxx","ssid":"xxx"}
 
     UserInfo[aid,userInfo]
-    UserSsid[aid,ssid,time]
+    AidSsid[aid,ssid,time]
 
 ## 用户标签CRUD
 /addUserTag

@@ -29,6 +29,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public void updateAccountEmailByAid(String newEmail, Integer aid) {
+        accountDao.updateAccountEmailByAid(newEmail,aid);
+    }
+
+    @Override
+    public void updateAccountPswdByAid(String userPswd, Integer aid) {
+        accountDao.updateAccountPswdByAid(userPswd,aid);
+    }
+
+    @Override
     public void updateAccountEmailByEmail(String newEmail,String oldEmail){
         accountDao.updateAccountEmailByEmail(newEmail,oldEmail);
     }
@@ -39,13 +49,28 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public String findAccountPswdByAid(Integer aid) {
+        return accountDao.findAccountPswdByAid(aid);
+    }
+
+    @Override
+    public String findAccountPswdByEmail(String email) {
+        return accountDao.findAccountPswdByEmail(email);
+    }
+
+    @Override
+    public String findAccountEmailByAid(Integer aid) {
+        return accountDao.findAccountEmailByAid(aid);
+    }
+
+    @Override
     public Integer findAccountAidByEmail(String email){
         return accountDao.findAccountAidByEmail(email);
     }
 
     @Override
-    public List<Account> findAccountById(Integer aid){
-        return accountDao.findAccountById(aid);
+    public List<Account> findAccountByAid(Integer aid){
+        return accountDao.findAccountByAid(aid);
     }
 
     @Override
