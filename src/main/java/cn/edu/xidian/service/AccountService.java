@@ -16,7 +16,7 @@ public interface AccountService {
     String findAccountPswdByEmail(String email);
     String findAccountEmailByAid(Integer aid);
     Integer findAccountAidByEmail(String email);
-    List<Account> findAccountByAid(Integer aid);
+    Account findAccountByAid(Integer aid);
     List<Account> findAccountByName(String accName);
     Account findAccountByEmail(String email);
 }

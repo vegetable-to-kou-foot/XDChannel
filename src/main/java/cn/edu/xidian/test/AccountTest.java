@@ -1,5 +1,7 @@
 package cn.edu.xidian.test;
 
+import cn.edu.xidian.domain.Account;
+import cn.edu.xidian.service.AccountService;
 import cn.edu.xidian.service.SecurityService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +31,8 @@ public class AccountTest {
 
     @Autowired
     private SecurityService securityService;
+    @Autowired
+    private AccountService accountService;
 
     @Test
     public void timeTest(){
@@ -52,6 +56,12 @@ public class AccountTest {
         }else{
             System.out.println("\n\n\nssidBase!=null!!!\n\n\n");
         }
+    }
+
+    @Test
+    public void findAccountTest(){
+        Account account = accountService.findAccountByAid(9);
+        System.out.println(account);
     }
 
 

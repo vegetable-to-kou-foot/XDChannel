@@ -43,7 +43,7 @@ public interface AccountDao {
     Integer findAccountAidByEmail(String email);
 
     @Select("select * from Account where aid=#{aid}")
-    List<Account> findAccountByAid(Integer aid);
+    Account findAccountByAid(Integer aid);
 
     @Select("select * from Account where accName=#{accName}")
     List<Account> findAccountByName(String accName);

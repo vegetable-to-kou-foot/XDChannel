@@ -2,25 +2,50 @@
 > 如果README.md与README_2.md内容有出入，以README_2.md为准。
 ## 账户CRUD
 /addAccount
-> {"user_name":"xxx","password":"xxx","email","xxx"}
+> I:{"accName":"xxx","userPswd":"xxx","email":"xxx"}
+>
+> O:{"success":"0 or 1"}
 
 /deleteAccount
-> {"user_name":"xxx","password":"xxx","email","xxx"}
+> I:{"accName":"xxx","userPswd":"xxx","email":"xxx"}
 > 
+> O:{"success":"0 or 1"}
+>
 > 必须三项都对，而且通过邮箱验证才能删。（防止邮箱验证的实现出现问题，这样黑客就能删掉全部账户）
 
 /findAccount
-> {"email","xxx"}
+> I:{"email":"xxx"}
+>
+> O:{"success":"0 or 1","account":{"aid":"xxx","accName":"xxx","userPswd":"xxx","email":"xxx"}}
 >
 > 根据email查账户是否存在，提供注册功能时有用。
 
 /editAccount/editUserName
-> {"aid":"xxx","ssid":"xxx","user_name":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","accName":"xxx"}
+>
+> O:{"success":"0 or 1","errCode":"xxx"}
+>
+> errCode仅当success=0时有效，可能取值为：["Login","Timeout","Ssid wrong","Exception"]
+>
+> Login:数据库中没有此人的ssid，说明此人当前未登录，应跳转至登录页面。
+>
+> Timeout:ssid有效时间是5小时，出现该错误说明超时了，要重新登录。
+>
+> Ssid wrong:提供的ssid与数据库中的对不上。
+>
+> Exception:出现异常，需要联系管理员。
 
 /editAccount/editUserPswd
-> {"aid":"xxx","ssid":"xxx","old_password":"xxx","new_password":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","oldPassword":"xxx","newPassword":"xxx"}
+>
+> O:{"success":"0 or 1","errCode":"xxx"}
 >
 > 修改密码的时候要提供旧密码，因为用户离开电脑的时候，可能会有人直接以用户的身份修改密码。
+>
+> errCode仅当success=0时有效，可能取值为：["Login","Timeout","Ssid wrong","Password wrong","Exception"]
+>
+> Password wrong:密码错误。
+
 
 `/editAccount/editUserEmail`
 > {"aid":"xxx","ssid":"xxx","old_email":"xxx"}
@@ -30,10 +55,14 @@
 > 这里的安全性需要仔细考虑，但是因为功能相对独立，可以等会儿再实现。
 
 /login
-> {"email":"xxx","password":"xxx"}
+> I:{"email":"xxx","password":"xxx"}
+>
+> O:{"success":"0 or 1","aid":"xxx","ssid":"xxx","errCode":"xxx"}
 >
 > 因为允许重名，所以不能使用user_name登录。
 > 登录后将返回aid、ssid。
+>
+> errCode仅当success=0时有效，可能取值为：["Password wrong","Exception"]
 
 /logout
 > 前端自己就能解决，cookies一删，页面一跳就行。

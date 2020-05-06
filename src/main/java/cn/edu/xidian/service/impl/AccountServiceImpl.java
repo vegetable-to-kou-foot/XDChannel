@@ -69,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<Account> findAccountByAid(Integer aid){
+    public Account findAccountByAid(Integer aid){
         return accountDao.findAccountByAid(aid);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 
-@Controller
+@RestController
 public class AccountController {
 
     @Autowired
@@ -27,91 +28,160 @@ public class AccountController {
     private UtilService utilService;
 
     @RequestMapping("/addAccount")
-    public String addAccount(Account account){
-        accountService.addAccount(account);
-        return "success";
+    public ModelAndView addAccount(Account account, ModelAndView mav){
+        try{
+            accountService.addAccount(account);
+            mav.setViewName("success");
+            mav.addObject("success",1);
+        }catch (Exception e){
+            mav.setViewName("failed");
+            mav.addObject("success",0);
+        }
+        return mav;
     }
 
     @RequestMapping("/deleteAccount")
-    public String deleteAccountByEmail(Account account){
-        Account willBeDelAcc = accountService.findAccountByEmail(account.getEmail());
-        if (willBeDelAcc.getAccName().equals(account.getAccName()) &&
-                willBeDelAcc.getUserPswd().equals(account.getUserPswd()) &&
-                willBeDelAcc.getEmail().equals(account.getEmail())){
-            accountService.deleteAccountByEmail(account.getEmail());
-            return "success";
+    public ModelAndView deleteAccountByEmail(Account account,ModelAndView mav){
+        try{
+            Account willBeDelAcc = accountService.findAccountByEmail(account.getEmail());
+            if (willBeDelAcc.getAccName().equals(account.getAccName()) &&
+                    willBeDelAcc.getUserPswd().equals(account.getUserPswd()) &&
+                    willBeDelAcc.getEmail().equals(account.getEmail())){
+                accountService.deleteAccountByEmail(account.getEmail());
+                mav.setViewName("success");
+                mav.addObject("success",1);
+            }
+        }catch (Exception e){
+            mav.setViewName("failed");
+            mav.addObject("success",0);
         }
-        return "failed";
+        return mav;
     }
 
-    @ResponseBody
     @RequestMapping("/findAccount")
-    public Account findAccountByEmail(String email){
-        return accountService.findAccountByEmail(email);
+    public ModelAndView findAccountByEmail(@RequestParam String email,ModelAndView mav){
+        try{
+            Account account = accountService.findAccountByEmail(email);
+            if (account!=null){
+                mav.setViewName("success");
+                mav.addObject("success",1);
+                mav.addObject("account",account);
+            }
+        }catch (Exception e){
+            mav.setViewName("failed");
+            mav.addObject("success",0);
+            mav.addObject("account","");
+        }
+        return mav;
     }
 
     @RequestMapping("/editAccount/editUserName")
-    public String updateAccountNameByAid(@RequestParam Integer aid,@RequestParam String ssid,@RequestParam String userName){
-        String errCode = securityService.checkSsid(aid,ssid);
-        switch (errCode){
-            case "Login":
-            case "Timeout":
-            case "Ssid wrong":
-                //上面的返回位置是不同的，与前端合并时要注意
-                return "failed";
+    public ModelAndView updateAccountNameByAid(@RequestParam Integer aid,@RequestParam String ssid,
+                                               @RequestParam String accName,ModelAndView mav){
+        try{
+            String errCode = securityService.checkSsid(aid,ssid);
+            switch (errCode){
+                case "Login":
+                    mav.setViewName("failed");
+                    mav.addObject("success",0);
+                    mav.addObject("errCode","Login");
+                    return mav;
+                case "Timeout":
+                    mav.setViewName("failed");
+                    mav.addObject("success",0);
+                    mav.addObject("errCode","Timeout");
+                    return mav;
+                case "Ssid wrong":
+                    mav.setViewName("failed");
+                    mav.addObject("success",0);
+                    mav.addObject("errCode","Ssid wrong");
+                    return mav;
+            }
+            accountService.updateAccountNameByAid(accName,aid);
+            mav.setViewName("success");
+            mav.addObject("success",1);
+            mav.addObject("errCode","");
+        }catch (Exception e){
+            mav.setViewName("failed");
+            mav.addObject("success",0);
+            mav.addObject("errCode","Exception");
         }
+        return mav;
 
-        accountService.updateAccountNameByAid(userName,aid);
-        //返回个人信息页面
-        return "success";
     }
 
     @RequestMapping("/editAccount/editUserPswd")
-    public String updateAccountPswdByAid(@RequestParam Integer aid,@RequestParam String ssid,
-                                         @RequestParam String oldPassword,@RequestParam String newPassword){
-        String errCode = securityService.checkSsid(aid,ssid);
-        switch (errCode){
-            case "Login":
-            case "Timeout":
-            case "Ssid wrong":
-                //上面的返回位置是不同的，与前端合并时要注意
-                return "failed";
+    public ModelAndView updateAccountPswdByAid(@RequestParam Integer aid,@RequestParam String ssid,
+                                         @RequestParam String oldPassword,@RequestParam String newPassword,
+                                               ModelAndView mav){
+        try{
+            String errCode = securityService.checkSsid(aid,ssid);
+            switch (errCode) {
+                case "Login":
+                    mav.setViewName("failed");
+                    mav.addObject("success", 0);
+                    mav.addObject("errCode", "Login");
+                    return mav;
+                case "Timeout":
+                    mav.setViewName("failed");
+                    mav.addObject("success", 0);
+                    mav.addObject("errCode", "Timeout");
+                    return mav;
+                case "Ssid wrong":
+                    mav.setViewName("failed");
+                    mav.addObject("success", 0);
+                    mav.addObject("errCode", "Ssid wrong");
+                    return mav;
+            }
+            String passwordBase = accountService.findAccountPswdByAid(aid);
+            if (!passwordBase.equals(oldPassword)){
+                mav.setViewName("failed");
+                mav.addObject("success", 0);
+                mav.addObject("errCode", "Password wrong");
+                return mav;
+            }
+            accountService.updateAccountPswdByAid(newPassword,aid);
+            mav.setViewName("success");
+            mav.addObject("success", 1);
+            mav.addObject("errCode", "");
+        }catch (Exception e){
+            mav.setViewName("failed");
+            mav.addObject("success", 0);
+            mav.addObject("errCode", "Exception");
         }
-        String passwordBase = accountService.findAccountPswdByAid(aid);
-        if (!passwordBase.equals(oldPassword)){
-            //返回密码错误
-            return "failed";
-        }
-
-        accountService.updateAccountPswdByAid(newPassword,aid);
-        //返回修改成功
-        return "success";
+        return mav;
     }
 
-    @ResponseBody
     @RequestMapping("/login")
-    public void login(@RequestParam String email,@RequestParam String password,Model model){
-        String passwordBase = accountService.findAccountPswdByEmail(email);
-        if (!passwordBase.equals(password)){
-            model.addAttribute("success",0);
-            model.addAttribute("ssid","");
-            model.addAttribute("aid","");
-            //返回密码错误
-            return;
+    public ModelAndView login(@RequestParam String email,@RequestParam String password,ModelAndView mav){
+        try{
+            String passwordBase = accountService.findAccountPswdByEmail(email);
+            if (!passwordBase.equals(password)){
+                mav.setViewName("failed");
+                mav.addObject("success", 0);
+                mav.addObject("aid", "");
+                mav.addObject("ssid", "");
+                mav.addObject("errCode", "Password wrong");
+                return mav;
+            }
+            String ssid = utilService.getRandomSsid();
+            Integer aid = accountService.findAccountAidByEmail(email);
+            long timeNow = new Date().getTime();
+            securityService.addAidSsid(aid,ssid,timeNow);
+            mav.setViewName("success");
+            mav.addObject("success", 1);
+            mav.addObject("aid", aid);
+            mav.addObject("ssid", ssid);
+            mav.addObject("errCode", "");
+            return mav;
+        }catch (Exception e){
+            mav.setViewName("failed");
+            mav.addObject("success", 0);
+            mav.addObject("aid", "");
+            mav.addObject("ssid", "");
+            mav.addObject("errCode", "Exception");
+            return mav;
         }
-        String ssid = utilService.getRandomSsid();
-        System.out.println("\n\n\n"+ssid+"\n\n\n");
-        Integer aid = accountService.findAccountAidByEmail(email);
-        System.out.println("\n\n\n"+aid+"\n\n\n");
-        long timeNow = new Date().getTime();
-        System.out.println("\n\n\n"+timeNow+"\n\n\n");
-        model.addAttribute("success",1);
-        model.addAttribute("ssid",ssid);
-        model.addAttribute("aid",aid);
-        securityService.addAidSsid(aid,ssid,timeNow);
-
-        //返回索引页
-        return;
     }
 
 
