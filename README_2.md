@@ -73,6 +73,9 @@
 /editProfilePic
 > 暂时不知道怎么实现，应该有一个专门的文件提交方法。
 
+/findProfilePic
+> 获取头像
+
 /editUserInfo
 > {"aid":"xxx","ssid":"xxx","user_info":"打包成JSON格式的字符串"}
 >

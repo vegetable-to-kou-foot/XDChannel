@@ -23,5 +23,11 @@
     <input type="submit" value="保存"/><br/>
 </form>
 
+<h2>图片上传</h2>
+<form action="/saveImg" method="post" enctype="multipart/form-data">
+    图片:<input type="file"  name="upload"/><br/>
+    <input type="submit" value="提交"/>
+</form>
+
 </body>
 </html>
