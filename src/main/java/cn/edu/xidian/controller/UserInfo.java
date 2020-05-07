@@ -17,8 +17,8 @@ public class UserInfo {
     private UtilService utilService;
 
     //该代码来自https://www.cnblogs.com/xQlover/p/9898255.html
-    @RequestMapping("/saveImg")
-    public String saveImg(MultipartFile upload, HttpServletRequest request){
+    @RequestMapping("/editProfilePic")
+    public String editProfilePic(MultipartFile upload, HttpServletRequest request){
         utilService.upLoadFile(upload);
         return "ok";
     }
