@@ -77,52 +77,81 @@
 > 获取头像
 
 /editUserInfo
-> {"aid":"xxx","ssid":"xxx","user_info":"打包成JSON格式的字符串"}
+> I:{"aid":"xxx","ssid":"xxx","userInfo":"打包成JSON格式的字符串"}
+>
+> O:{"success":"0 or 1"}
 >
 > aid的保存需要依赖于cookie，但是只有aid就能改的话那数据包很容易被伪造。
 > 一般解决办法是对一个连接分配一个短时间有效的随机数，随机数对上了才能提供服务。
 > 这个随机数就叫ssid吧。
 
 /findUserInfo
-> {"aid":"xxx","ssid":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx"}
+>
+> O:{"success":"0 or 1","userInfo":"打包成JSON的字符串"}
 
     UserInfo[aid,userInfo]
     AidSsid[aid,ssid,time]
 
 ## 用户标签CRUD
 /addUserTag
-> {"aid":"xxx","ssid":"xxx","tag_name":"xxx","tag_value":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","tagName":"xxx","tagValue":"xxx"}
+>
+> O:{"success":"0 or 1"}
 
 /deleteUserTag
-> {"aid":"xxx","ssid":"xxx","tag_name":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","tagName":"xxx"}
+>
+> O:{"success":"0 or 1"}
 
 /findUserTag
-> {"aid":"xxx","ssid":"xxx","tag_name":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx"}
 >
-> 前端需要用户敲一个字就查一下或隔3s查一下
+> O:{"success":"0 or 1","userTag":"JSON"}
+>
+> 查询这个人的所有tag和值
+
+/findAccountTag
+> I:{"aid":"xxx","ssid":"xxx","tagName":"xxx"}
+>
+> O:{"success":"0 or 1","accTags":["TagA","TagB"]}
+>
+> 用于查询是否存在以请求的tag开头的tag。
+> 前端需要用户敲一个字就查一下或隔3s查一下。
 
     UserTag[aid,userTag]
     AccountTag[atid,aTagName,aTagInfo]
 
 ## 说说（广播）CRUD
 /addBroadcast
-> {"aid":"xxx","ssid":"xxx","fid":"xxx","broadcastScript":"xxx",
+> I:{"aid":"xxx","ssid":"xxx","fid":"xxx","broadcastScript":"xxx",
 > "broadcastTag":"xxx","time":"xxx","limit":"xxx"}
+>
+> O:{"success":"0 or 1"}
 >
 > 因为回复和发说说共用了这个接口，所以需要提供fid。
 
 /deleteBroadcast
-> {"aid":"xxx","ssid":"xxx","bid":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","bid":"xxx"}
+>
+> O:{"success":"0 or 1"}
 
 /editBroadcast
-> {"aid":"xxx","ssid":"xxx","bid":"xxx","broadcastScript":"xxx",
+> I:{"aid":"xxx","ssid":"xxx","bid":"xxx","broadcastScript":"xxx",
 > "broadcastTag":"xxx","time":"xxx","limit":"xxx"}
+>
+> O:{"success":"0 or 1"}
 
 /findBroadcast
-> {"bid":"xxx","bid_op":"任何允许的符号，如>","bid_val":"xxx",
+> I:{"bid":"xxx","bid_op":"任何允许的符号，如>","bid_val":"xxx",
 > "fid":"xxx","fid_op":"任何允许的符号，如>","fid_val":"xxx",
 > aid/broadcastScript/likeIt/time同上,
 > "broadcastTag":"{"tag_1","tag_2"}"}
+>
+> O:{"success":"0 or 1","broadCasts":[
+> {"bid":"xxx","fid":"xxx","broadcastScript":"xxx",
+> "broadcastTag":"xxx","time":"xxx","limit":"xxx"},{同上一个}
+> ]}
 >
 > 该接口将复用于显示说说和按条件查询说说。
 >
@@ -140,16 +169,24 @@
 
 ## 关注CRUD
 /addFollower
-> {"aid":"xxx","ssid":"xxx","follow_aid","xxx"}
+> I:{"aid":"xxx","ssid":"xxx","follow_aid","xxx"}
+>
+> O:{"success":"0 or 1"}
 
 /deleteFollower
-> {"aid":"xxx","ssid":"xxx","follow_aid","xxx"}
+> I:{"aid":"xxx","ssid":"xxx","follow_aid","xxx"}
+>
+> O:{"success":"0 or 1"}
 
 /findFollower
-> {"aid":"xxx","ssid":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx"}
+>
+> O:{"success":"0 or 1","followers":[Account_1,Account_2]}
 
 /findBeFollowed
-> {"aid":"xxx","ssid":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx"}
+>
+> O:{"success":"0 or 1","beFollowed":[Account_1,Account_2]}
 
     Follow[aid,followInfo]
     BeFollowed[aid,beFollowedInfo]
@@ -161,11 +198,13 @@
 
 ### 查用户
 /findUser
-> {"aid":"xxx","user_name":"xxx","user_school_id":"xxx","email":"xxx",
+> I:{"aid":"xxx","user_name":"xxx","user_school_id":"xxx","email":"xxx",
 > "user_tag":"{
 >   "tag_1":"xxx","tag_1_op":"允许的操作符","tag_1_val":"xxx",
 >   "tag_2":"xxx","tag_2_op":"允许的操作符","tag_2_val":"xxx",...
 >   }"}
+>
+> O:{"success":"0 or 1","users":[Account_1,Account_2]}
 >
 > aid/user_name（姓名缩写）/user_school_id（学号）/email只支持精确匹配，
 > 这是为了有人捡到校园卡之后能直接联系到失主。
