@@ -1,7 +1,6 @@
 USE xdc;
 
 DROP TABLE Account;
-DROP TABLE AidSsid;
 
 CREATE TABLE Account(
 aid BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -10,8 +9,68 @@ userPswd VARCHAR(20) NOT NULL,
 email VARCHAR(30) NOT NULL
 );
 
+DROP TABLE AidSsid;
+
 CREATE TABLE AidSsid(
 aid BIGINT PRIMARY KEY,
 ssid CHAR(16) NOT NULL,
 timestp BIGINT NOT NULL
+);
+
+DROP TABLE UserInfo;
+
+CREATE TABLE UserInfo(
+aid BIGINT PRIMARY KEY,
+userInfo VARCHAR(1024) NOT NULL
+);
+
+DROP TABLE UserTag;
+
+CREATE TABLE UserTag(
+aid BIGINT PRIMARY KEY,
+userTag VARCHAR(1024)
+);
+
+DROP TABLE AccountTag;
+
+CREATE TABLE AccountTag(
+atid BIGINT PRIMARY KEY,
+aTagName VARCHAR(64) NOT NULL,
+aTagInfo VARCHAR(1024)
+);
+
+DROP TABLE UserBroadcast;
+
+CREATE TABLE UserBroadcast(
+bid BIGINT PRIMARY KEY,
+fid BIGINT NOT NULL,
+aid BIGINT NOT NULL,
+broadcastScript VARCHAR(2048) NOT NULL,
+likeIt INT NOT NULL,
+review VARCHAR(10000),
+broadcastTag VARCHAR(256),
+timestp BIGINT NOT NULL,
+limits VARCHAR(2048)
+);
+
+DROP TABLE BroadcastTag;
+
+CREATE TABLE BroadcastTag(
+btid BIGINT PRIMARY KEY,
+bTagName VARCHAR(64) NOT NULL,
+bTagInfo VARCHAR(1024)
+);
+
+DROP TABLE Follow;
+
+CREATE TABLE Follow(
+aid BIGINT PRIMARY KEY,
+followInfo VARCHAR(10000)
+);
+
+DROP TABLE BeFollowed;
+
+CREATE TABLE BeFollowed(
+aid BIGINT PRIMARY KEY,
+beFollowedInfo VARCHAR(10000)
 );

@@ -145,12 +145,12 @@
 /findBroadcast
 > I:{"bid":"xxx","bid_op":"任何允许的符号，如>","bid_val":"xxx",
 > "fid":"xxx","fid_op":"任何允许的符号，如>","fid_val":"xxx",
-> aid/broadcastScript/likeIt/time同上,
+> aid/broadcastScript/likeIt/timestp同上,
 > "broadcastTag":"{"tag_1","tag_2"}"}
 >
 > O:{"success":"0 or 1","broadCasts":[
 > {"bid":"xxx","fid":"xxx","broadcastScript":"xxx",
-> "broadcastTag":"xxx","time":"xxx","limit":"xxx"},{同上一个}
+> "broadcastTag":"xxx","timestp":"xxx","limits":"xxx"},{同上一个}
 > ]}
 >
 > 该接口将复用于显示说说和按条件查询说说。
@@ -164,7 +164,7 @@
 > broadcastTag用于指定包含的标签，由于标签中不允许出现~之类的特殊符号，
 > 所以如果某个tag以~开头，表示“不包含这个标签”。
 
-    UserBroadcast[bid,fid,aid,broadcastScript,likeIt,review,broadcastTag,time,limit]
+    UserBroadcast[bid,fid,aid,broadcastScript,likeIt,review,broadcastTag,timestp,limits]
     BroadcastTag[btid,bTagName,bTagInfo]
 
 ## 关注CRUD
