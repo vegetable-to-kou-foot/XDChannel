@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 
-@RestController
+@Controller
 public class AccountController {
 
     @Autowired
@@ -27,160 +26,154 @@ public class AccountController {
     @Autowired
     private UtilService utilService;
 
-    @RequestMapping("/addAccount")
-    public ModelAndView addAccount(Account account, ModelAndView mav){
-        try{
-            accountService.addAccount(account);
-            mav.setViewName("success");
-            mav.addObject("success",1);
-        }catch (Exception e){
-            mav.setViewName("failed");
-            mav.addObject("success",0);
-        }
-        return mav;
+    @ResponseBody
+    @RequestMapping("/testJSON")
+    public String testJSON(@RequestParam Integer aaa,Model model){
+        model.addAttribute("aaa",100);
+        return utilService.modelToString(model);
     }
 
+    @ResponseBody
+    @RequestMapping("/addAccount")
+    public String addAccount(Account account, Model model){
+        try{
+            accountService.addAccount(account);
+            model.addAttribute("success",1);
+        }catch (Exception e){
+            model.addAttribute("success",0);
+        }
+        return utilService.modelToString(model);
+    }
+
+    @ResponseBody
     @RequestMapping("/deleteAccount")
-    public ModelAndView deleteAccountByEmail(Account account,ModelAndView mav){
+    public String deleteAccountByEmail(Account account,Model model){
         try{
             Account willBeDelAcc = accountService.findAccountByEmail(account.getEmail());
             if (willBeDelAcc.getAccName().equals(account.getAccName()) &&
                     willBeDelAcc.getUserPswd().equals(account.getUserPswd()) &&
                     willBeDelAcc.getEmail().equals(account.getEmail())){
                 accountService.deleteAccountByEmail(account.getEmail());
-                mav.setViewName("success");
-                mav.addObject("success",1);
+                model.addAttribute("success",1);
             }
         }catch (Exception e){
-            mav.setViewName("failed");
-            mav.addObject("success",0);
+            model.addAttribute("success",0);
         }
-        return mav;
+        return utilService.modelToString(model);
     }
 
+    @ResponseBody
     @RequestMapping("/findAccount")
-    public ModelAndView findAccountByEmail(@RequestParam String email,ModelAndView mav){
+    public String findAccountByEmail(@RequestParam String email,Model model){
         try{
             Account account = accountService.findAccountByEmail(email);
             if (account!=null){
-                mav.setViewName("success");
-                mav.addObject("success",1);
-                mav.addObject("account",account);
+                model.addAttribute("success",1);
+                model.addAttribute("account",account);
             }
         }catch (Exception e){
-            mav.setViewName("failed");
-            mav.addObject("success",0);
-            mav.addObject("account","");
+            model.addAttribute("success",0);
+            model.addAttribute("account"," ");
         }
-        return mav;
+        return utilService.modelToString(model);
     }
 
+    @ResponseBody
     @RequestMapping("/editAccount/editUserName")
-    public ModelAndView updateAccountNameByAid(@RequestParam Integer aid,@RequestParam String ssid,
-                                               @RequestParam String accName,ModelAndView mav){
+    public String updateAccountNameByAid(@RequestParam Integer aid,@RequestParam String ssid,
+                                               @RequestParam String accName,Model model){
         try{
             String errCode = securityService.checkSsid(aid,ssid);
             switch (errCode){
                 case "Login":
-                    mav.setViewName("failed");
-                    mav.addObject("success",0);
-                    mav.addObject("errCode","Login");
-                    return mav;
+                    model.addAttribute("success",0);
+                    model.addAttribute("errCode","Login");
+                    return utilService.modelToString(model);
                 case "Timeout":
-                    mav.setViewName("failed");
-                    mav.addObject("success",0);
-                    mav.addObject("errCode","Timeout");
-                    return mav;
+                    model.addAttribute("success",0);
+                    model.addAttribute("errCode","Timeout");
+                    return utilService.modelToString(model);
                 case "Ssid wrong":
-                    mav.setViewName("failed");
-                    mav.addObject("success",0);
-                    mav.addObject("errCode","Ssid wrong");
-                    return mav;
+                    model.addAttribute("success",0);
+                    model.addAttribute("errCode","Ssid wrong");
+                    return utilService.modelToString(model);
             }
             accountService.updateAccountNameByAid(accName,aid);
-            mav.setViewName("success");
-            mav.addObject("success",1);
-            mav.addObject("errCode","");
+            model.addAttribute("success",1);
+            model.addAttribute("errCode"," ");
+            return utilService.modelToString(model);
         }catch (Exception e){
-            mav.setViewName("failed");
-            mav.addObject("success",0);
-            mav.addObject("errCode","Exception");
+            model.addAttribute("success",0);
+            model.addAttribute("errCode","Exception");
+            return utilService.modelToString(model);
         }
-        return mav;
-
     }
 
+    @ResponseBody
     @RequestMapping("/editAccount/editUserPswd")
-    public ModelAndView updateAccountPswdByAid(@RequestParam Integer aid,@RequestParam String ssid,
+    public String updateAccountPswdByAid(@RequestParam Integer aid,@RequestParam String ssid,
                                          @RequestParam String oldPassword,@RequestParam String newPassword,
-                                               ModelAndView mav){
+                                               Model model){
         try{
             String errCode = securityService.checkSsid(aid,ssid);
             switch (errCode) {
                 case "Login":
-                    mav.setViewName("failed");
-                    mav.addObject("success", 0);
-                    mav.addObject("errCode", "Login");
-                    return mav;
+                    model.addAttribute("success", 0);
+                    model.addAttribute("errCode", "Login");
+                    return utilService.modelToString(model);
                 case "Timeout":
-                    mav.setViewName("failed");
-                    mav.addObject("success", 0);
-                    mav.addObject("errCode", "Timeout");
-                    return mav;
+                    model.addAttribute("success", 0);
+                    model.addAttribute("errCode", "Timeout");
+                    return utilService.modelToString(model);
                 case "Ssid wrong":
-                    mav.setViewName("failed");
-                    mav.addObject("success", 0);
-                    mav.addObject("errCode", "Ssid wrong");
-                    return mav;
+                    model.addAttribute("success", 0);
+                    model.addAttribute("errCode", "Ssid wrong");
+                    return utilService.modelToString(model);
             }
             String passwordBase = accountService.findAccountPswdByAid(aid);
             if (!passwordBase.equals(oldPassword)){
-                mav.setViewName("failed");
-                mav.addObject("success", 0);
-                mav.addObject("errCode", "Password wrong");
-                return mav;
+                model.addAttribute("success", 0);
+                model.addAttribute("errCode", "Password wrong");
+                return utilService.modelToString(model);
             }
             accountService.updateAccountPswdByAid(newPassword,aid);
-            mav.setViewName("success");
-            mav.addObject("success", 1);
-            mav.addObject("errCode", "");
+            model.addAttribute("success", 1);
+            model.addAttribute("errCode", " ");
+            return utilService.modelToString(model);
         }catch (Exception e){
-            mav.setViewName("failed");
-            mav.addObject("success", 0);
-            mav.addObject("errCode", "Exception");
+            model.addAttribute("success", 0);
+            model.addAttribute("errCode", "Exception");
+            return utilService.modelToString(model);
         }
-        return mav;
     }
 
+    @ResponseBody
     @RequestMapping("/login")
-    public ModelAndView login(@RequestParam String email,@RequestParam String password,ModelAndView mav){
+    public String login(@RequestParam String email,@RequestParam String password,Model model){
         try{
             String passwordBase = accountService.findAccountPswdByEmail(email);
             if (!passwordBase.equals(password)){
-                mav.setViewName("failed");
-                mav.addObject("success", 0);
-                mav.addObject("aid", "");
-                mav.addObject("ssid", "");
-                mav.addObject("errCode", "Password wrong");
-                return mav;
+                model.addAttribute("success", 0);
+                model.addAttribute("aid", " ");
+                model.addAttribute("ssid", " ");
+                model.addAttribute("errCode", "Password wrong");
+                return utilService.modelToString(model);
             }
             String ssid = utilService.getRandomSsid();
             Integer aid = accountService.findAccountAidByEmail(email);
             long timeNow = new Date().getTime();
             securityService.addAidSsid(aid,ssid,timeNow);
-            mav.setViewName("success");
-            mav.addObject("success", 1);
-            mav.addObject("aid", aid);
-            mav.addObject("ssid", ssid);
-            mav.addObject("errCode", "");
-            return mav;
+            model.addAttribute("success", 1);
+            model.addAttribute("aid", aid);
+            model.addAttribute("ssid", ssid);
+            model.addAttribute("errCode", " ");
+            return utilService.modelToString(model);
         }catch (Exception e){
-            mav.setViewName("failed");
-            mav.addObject("success", 0);
-            mav.addObject("aid", "");
-            mav.addObject("ssid", "");
-            mav.addObject("errCode", "Exception");
-            return mav;
+            model.addAttribute("success", 0);
+            model.addAttribute("aid", " ");
+            model.addAttribute("ssid", " ");
+            model.addAttribute("errCode", "Exception");
+            return utilService.modelToString(model);
         }
     }
 

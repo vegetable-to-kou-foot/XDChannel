@@ -40,11 +40,10 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account{" +
-                "aid=" + aid +
-                ", accName='" + accName + '\'' +
-                ", userPswd='" + userPswd + '\'' +
-                ", email='" + email + '\'' +
+        return "{\"aid\":" + aid +
+                ",\"accName\":\"" + accName + '\"' +
+                ",\"userPswd\":\"" + userPswd + '\"' +
+                ",\"email\":\"" + email + '\"' +
                 '}';
     }
 }

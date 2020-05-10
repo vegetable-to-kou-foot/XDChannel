@@ -1,5 +1,6 @@
 package cn.edu.xidian.service;
 
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -8,4 +9,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UtilService {
     String getRandomSsid();
     void upLoadFile(MultipartFile upload);
+    String modelToString(Model model);
 }
