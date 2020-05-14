@@ -38,6 +38,7 @@ public class AccountController {
     public String addAccount(Account account, Model model){
         try{
             accountService.addAccount(account);
+            //todo:这里要维护UserInfo表，插入一个默认JSON
             model.addAttribute("success",1);
         }catch (Exception e){
             model.addAttribute("success",0);

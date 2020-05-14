@@ -16,7 +16,7 @@
 
 <h3>测试保存</h3>
 
-<form action="/addAccount" method="post">
+<form action="addAccount" method="post">
     姓名：<input type="text" name="accName"/><br/>
     密码：<input type="password" name="userPswd"/><br/>
     邮箱：<input type="text" name="email"/><br/>
@@ -24,10 +24,12 @@
 </form>
 
 <h2>图片上传</h2>
-<form action="/saveImg" method="post" enctype="multipart/form-data">
+<form action="editProfilePic" method="post" enctype="multipart/form-data">
     图片:<input type="file"  name="upload"/><br/>
     <input type="submit" value="提交"/>
 </form>
+
+<img src="images/50abc705-fb49-40bc-a94c-b2190050a0e8MGSV.png"/>
 
 </body>
 </html>

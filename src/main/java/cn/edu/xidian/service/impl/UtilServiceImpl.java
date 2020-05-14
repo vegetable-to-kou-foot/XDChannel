@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -36,25 +37,6 @@ public class UtilServiceImpl implements UtilService {
         return sb.toString();
     }
 
-    @Override
-    public void upLoadFile(MultipartFile upload) {
-        String filePath = "/images/"; //定义上传文件的存放位置
-        String fileName = upload.getOriginalFilename();  //获取上传文件的名字
-        //判断文件夹是否存在,不存在则创建
-        File file = new File(filePath);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        String newFilePath = filePath + UUID.randomUUID() + fileName; //新文件的路径
-
-        try {
-            upload.transferTo(new File(newFilePath));  //将传来的文件写入新建的文件
-
-        } catch (IllegalStateException | IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public String modelToString(Model model) {

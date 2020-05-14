@@ -76,6 +76,8 @@
 /findProfilePic
 > 获取头像
 
+**要实现这个，还要修改数据库**
+
 /editUserInfo
 > I:{"aid":"xxx","ssid":"xxx","userInfo":"打包成JSON格式的字符串"}
 >
