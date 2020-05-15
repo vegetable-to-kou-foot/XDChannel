@@ -1,15 +1,13 @@
 package cn.edu.xidian.controller;
 
 import cn.edu.xidian.service.SecurityService;
-import cn.edu.xidian.service.UserService;
+import cn.edu.xidian.service.UserInfoService;
 import cn.edu.xidian.service.UtilService;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sun.nio.ch.Util;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserInfoController {
 
     @Autowired
-    private UserService userService;
+    private UserInfoService userInfoService;
     @Autowired
     private SecurityService securityService;
     @Autowired
@@ -36,7 +34,7 @@ public class UserInfoController {
             if (!errCode.equals("OK")){
                 return "{\"success\":0}";
             }
-            userService.updateUserInfoProfilePicByAid(aid, upload, request);
+            userInfoService.updateUserInfoProfilePicByAid(aid, upload, request);
             return "{\"success\":1}";
         }catch (Exception e){
             return "{\"success\":0}";
@@ -51,7 +49,7 @@ public class UserInfoController {
             if (!errCode.equals("OK")){
                 throw new SecurityException();
             }
-            String profilePic = userService.getUserInfoProfilePicByAid(aid);
+            String profilePic = userInfoService.getUserInfoProfilePicByAid(aid);
             if (profilePic!=null){
                 model.addAttribute("success",1);
                 model.addAttribute("profilePic",profilePic);
@@ -74,7 +72,7 @@ public class UserInfoController {
             if (!errCode.equals("OK")){
                 throw new SecurityException();
             }
-            userService.updateUserInfoUserInfoByAid(aid,userInfo);
+            userInfoService.updateUserInfoUserInfoByAid(aid,userInfo);
             model.addAttribute("success",1);
         }catch (Exception e){
             model.addAttribute("success",0);
@@ -90,7 +88,7 @@ public class UserInfoController {
             if (!errCode.equals("OK")){
                 throw new SecurityException();
             }
-            String userInfo = userService.getUserInfoUserInfoByAid(aid);
+            String userInfo = userInfoService.getUserInfoUserInfoByAid(aid);
             if (userInfo != null){
                 model.addAttribute("success",1);
                 model.addAttribute("userInfo",userInfo);

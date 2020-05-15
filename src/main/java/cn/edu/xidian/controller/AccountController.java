@@ -39,6 +39,7 @@ public class AccountController {
         try{
             accountService.addAccount(account);
             //todo:这里要维护UserInfo表，插入一个默认JSON
+            //todo:维护UserTag，创建账户的同时插入"{}"
             model.addAttribute("success",1);
         }catch (Exception e){
             model.addAttribute("success",0);

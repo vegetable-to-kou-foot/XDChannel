@@ -1,7 +1,7 @@
 package cn.edu.xidian.service.impl;
 
 import cn.edu.xidian.dao.UserInfoDao;
-import cn.edu.xidian.service.UserService;
+import cn.edu.xidian.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +15,7 @@ import java.util.UUID;
  * Created by 胡广鹏 on 2020/5/14 21:24
  */
 @Service("userServiceImpl")
-public class UserServiceImpl implements UserService {
+public class UserInfoServiceImpl implements UserInfoService {
 
     @Autowired
     private UserInfoDao userInfoDao;

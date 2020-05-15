@@ -1,5 +1,6 @@
 package cn.edu.xidian.dao;
 
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -8,5 +9,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserTagDao {
 
+    @Insert("insert into UserTag (aid,userTag) values (#{aid},#{userTag})")
+    void addUserTag(@Param("aid") Integer aid, @Param("userTag") String userTag);
 
+    @Delete("delete from UserTag where aid=#{aid}")
+    void deleteUserTagByAid(Integer aid);
+
+    @Update("update UserTag set userTag=#{userTag} where aid=#{aid}")
+    void updateUserTagUserTagByAid(@Param("aid") Integer aid,@Param("userTag") String userTag);
+
+    @Select("select userTag from UserTag where aid=#{aid}")
+    String getUserTagUserTagByAid(Integer aid);
 }
