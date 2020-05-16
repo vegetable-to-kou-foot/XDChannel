@@ -200,13 +200,16 @@
 
 ### 查用户
 /findUser
-> I:{"aid":"xxx","user_name":"xxx","user_school_id":"xxx","email":"xxx",
-> "user_tag":"{
->   "tag_1":"xxx","tag_1_op":"允许的操作符","tag_1_val":"xxx",
->   "tag_2":"xxx","tag_2_op":"允许的操作符","tag_2_val":"xxx",...
->   }"}
+> I:{"aid":"xxx",
+> "userInfo":{
+> "prop_1":"xxx","prop_2":"xxx"（只能精确匹配，不能比大小）
+> },
+> "userTag":"[
+>   {"tag":"xxx","tagOp":"允许的操作符","tagVal":"xxx"},
+>   {"tag":"xxx","tagOp":"允许的操作符","tagVal":"xxx"},...
+>   ]"}
 >
-> O:{"success":"0 or 1","users":[Account_1,Account_2]}
+> O:{"success":"0 or 1","users":[UserInfo_1,UserInfo_2]}
 >
 > aid/user_name（姓名缩写）/user_school_id（学号）/email只支持精确匹配，
 > 这是为了有人捡到校园卡之后能直接联系到失主。

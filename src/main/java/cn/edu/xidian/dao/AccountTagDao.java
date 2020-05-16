@@ -1,5 +1,6 @@
 package cn.edu.xidian.dao;
 
+import cn.edu.xidian.domain.AccountTag;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
@@ -31,4 +32,7 @@ public interface AccountTagDao {
 
     @Select("select aTagName from AccountTag where aTagName like #{aTagName}")
     List<String> getAccountTagATagNameByATagName(String aTagName);
+
+    @Select("select * from AccountTag")
+    List<AccountTag> getAccountTagAll();
 }

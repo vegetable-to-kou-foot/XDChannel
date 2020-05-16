@@ -1,12 +1,10 @@
 package cn.edu.xidian.controller;
 
-import cn.edu.xidian.dao.UserTagDao;
 import cn.edu.xidian.service.SecurityService;
 import cn.edu.xidian.service.UserTagService;
 import cn.edu.xidian.service.UtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

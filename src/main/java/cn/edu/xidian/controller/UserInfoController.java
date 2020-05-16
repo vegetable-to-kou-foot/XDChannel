@@ -1,8 +1,13 @@
 package cn.edu.xidian.controller;
 
+import cn.edu.xidian.domain.FindUserRequest;
+import cn.edu.xidian.domain.UserInfo;
 import cn.edu.xidian.service.SecurityService;
 import cn.edu.xidian.service.UserInfoService;
 import cn.edu.xidian.service.UtilService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by 胡广鹏 on 2020/5/7 0:40
@@ -100,6 +106,21 @@ public class UserInfoController {
             model.addAttribute("userInfo"," ");
         }
         return utilService.modelToString(model);
+    }
+
+    @ResponseBody
+    @RequestMapping("/findUser")
+    public String findUser(@RequestParam FindUserRequest fur){
+        JSONObject ans = new JSONObject();
+        try{
+            List<UserInfo> userInfos = userInfoService.findUser(fur);
+            ans.put("success",1);
+            ans.put("broadcasts", JSON.toJSONString(userInfos));
+        }catch (Exception e){
+            ans.put("success",0);
+            ans.put("broadcasts"," ");
+        }
+        return ans.toJSONString();
     }
 
 }

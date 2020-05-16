@@ -11,10 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by 胡广鹏 on 2020/5/15 23:21
@@ -113,7 +110,7 @@ public class BroadcastServiceImpl implements BroadcastService {
         String baseBCTagsString = fbr.getBcTagsString();
         List<String> baseBCTagsList = JSONArray.parseArray(baseBCTagsString,String.class);
 
-        List<Broadcast> ans = null;
+        List<Broadcast> ans = Collections.emptyList();
 
         for (Broadcast bc : ansTmp){
             String bcTagString  = bc.getBcTag();
