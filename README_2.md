@@ -126,8 +126,8 @@
 
 ## 说说（广播）CRUD
 /addBroadcast
-> I:{"aid":"xxx","ssid":"xxx","fid":"xxx","broadcastScript":"xxx",
-> "broadcastTag":"xxx","time":"xxx","limit":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","fid":"xxx","bcScript":"xxx",
+> "bcTag":"xxx","time":"xxx","limit":"xxx"}
 >
 > O:{"success":"0 or 1"}
 >
@@ -139,16 +139,16 @@
 > O:{"success":"0 or 1"}
 
 /editBroadcast
-> I:{"aid":"xxx","ssid":"xxx","bid":"xxx","broadcastScript":"xxx",
-> "broadcastTag":"xxx","time":"xxx","limit":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","bid":"xxx",~~"bcScript":"xxx",
+> "bcTag":"xxx","time":"xxx",~~"limit":"xxx"}
 >
 > O:{"success":"0 or 1"}
 
 /findBroadcast
-> I:{"bid":"xxx","bid_op":"任何允许的符号，如>","bid_val":"xxx",
-> "fid":"xxx","fid_op":"任何允许的符号，如>","fid_val":"xxx",
+> I:{~~"bid":"xxx",~~"bid_op":"任何允许的符号，如>","bid_val":"xxx",
+> ~~"fid":"xxx",~~"fid_op":"任何允许的符号，如>","fid_val":"xxx",
 > aid/broadcastScript/likeIt/timestp同上,
-> "broadcastTag":"{"tag_1","tag_2"}"}
+> "bcTag":"{"tag_1","tag_2"}"}
 >
 > O:{"success":"0 or 1","broadCasts":[
 > {"bid":"xxx","fid":"xxx","broadcastScript":"xxx",

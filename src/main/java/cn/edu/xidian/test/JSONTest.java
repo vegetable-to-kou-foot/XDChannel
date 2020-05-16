@@ -27,4 +27,12 @@ public class JSONTest {
         List<String> tmp = JSONObject.parseArray(a,String.class);
         System.out.println(JSON.toJSONString(tmp));
     }
+
+    @Test
+    public void JSONTest3(){
+        String a = "{\"a\":\"1\"}";
+        JSONObject b = JSON.parseObject(a);
+        Integer c = (Integer) b.get("a");
+        System.out.println(c);
+    }
 }
