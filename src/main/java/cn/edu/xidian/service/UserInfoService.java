@@ -15,5 +15,5 @@ public interface UserInfoService {
     void updateUserInfoUserInfoByAid(Integer aid,String userInfo);
     String getUserInfoProfilePicByAid(Integer aid);
     String getUserInfoUserInfoByAid(Integer aid);
-    List<UserInfo> findUser(FindUserRequest fur);
+    List<Integer> findUser(FindUserRequest fur);
 }

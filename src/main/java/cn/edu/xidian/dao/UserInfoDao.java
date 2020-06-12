@@ -25,10 +25,10 @@ public interface UserInfoDao {
     @Update("update UserInfo set userInfo = #{userInfo} where aid=#{aid}")
     void updateUserInfoUserInfoByAid(@Param("aid") Integer aid, @Param("userInfo") String userInfo);
 
-    @Update("update UserTag set userTag=#{userTag} where aid=#{aid}")
+    @Update("update UserInfo set userTag=#{userTag} where aid=#{aid}")
     void updateUserInfoUserTagByAid(@Param("aid") Integer aid,@Param("userTag") String userTag);
 
-    @Select("select userTag from UserTag where aid=#{aid}")
+    @Select("select userTag from UserInfo where aid=#{aid}")
     String getUserInfoUserTagByAid(Integer aid);
 
     @Select("select profilePic from UserInfo where aid=#{aid}")

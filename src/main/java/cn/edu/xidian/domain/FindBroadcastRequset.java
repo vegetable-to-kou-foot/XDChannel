@@ -12,10 +12,12 @@ public class FindBroadcastRequset {
     private String aidOp;
     private Integer likeItVal;
     private String likeItOp;
-    private Integer timestpVal;
+    private long timestpVal;
     private String timestpOp;
     private String bcTagsString;
     private String bcScript;
+    private Integer pageSize;
+    private Integer pageNum;
 
     public Integer getBidVal() {
         return bidVal;
@@ -81,11 +83,11 @@ public class FindBroadcastRequset {
         this.likeItOp = likeItOp;
     }
 
-    public Integer getTimestpVal() {
+    public long getTimestpVal() {
         return timestpVal;
     }
 
-    public void setTimestpVal(Integer timestpVal) {
+    public void setTimestpVal(long timestpVal) {
         this.timestpVal = timestpVal;
     }
 
@@ -113,6 +115,22 @@ public class FindBroadcastRequset {
         this.bcScript = bcScript;
     }
 
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public Integer getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(Integer pageNum) {
+        this.pageNum = pageNum;
+    }
+
     @Override
     public String toString() {
         return "FindBroadcastRequset{" +
@@ -128,6 +146,8 @@ public class FindBroadcastRequset {
                 ", timestpOp='" + timestpOp + '\'' +
                 ", bcTagsString='" + bcTagsString + '\'' +
                 ", bcScript='" + bcScript + '\'' +
+                ", pageSize=" + pageSize +
+                ", pageNum=" + pageNum +
                 '}';
     }
 }

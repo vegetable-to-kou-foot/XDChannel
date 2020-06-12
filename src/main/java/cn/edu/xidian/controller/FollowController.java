@@ -10,10 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 胡广鹏 on 2020/5/15 16:59
@@ -29,68 +32,86 @@ public class FollowController {
     FollowService followService;
 
     @ResponseBody
-    @RequestMapping("/addFollower")
+    @RequestMapping(value = "/addFollower",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String addFollower(@RequestParam Integer aid, @RequestParam String ssid,
-                              @RequestParam Integer followAid, Model model){
+                              @RequestParam Integer followAid){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
         try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")) throw new SecurityException();
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
             followService.addFollower(aid,followAid);
-            model.addAttribute("success",1);
-        }catch (Exception e){
-            model.addAttribute("success",0);
-        }
-        return utilService.modelToString(model);
-    }
-
-    @ResponseBody
-    @RequestMapping("/deleteFollower")
-    public String deleteFollower(@RequestParam Integer aid, @RequestParam String ssid,
-                              @RequestParam Integer followAid, Model model){
-        try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")) throw new SecurityException();
-            followService.deleteFollower(aid,followAid);
-            model.addAttribute("success",1);
-        }catch (Exception e){
-            model.addAttribute("success",0);
-        }
-        return utilService.modelToString(model);
-    }
-
-    @ResponseBody
-    @RequestMapping("/findFollower")
-    public String findFollower(@RequestParam Integer aid, @RequestParam String ssid){
-        JSONObject ans = new JSONObject();
-        try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")) throw new SecurityException();
-            List<Integer> followers = followService.findFollower(aid);
-            String followersJSON = JSON.toJSONString(followers);
+            ssid = securityService.refreshSsid(aid);
             ans.put("success",1);
-            ans.put("followers",followersJSON);
+            ans.put("ssid",ssid);
+            ans.put("errCode",errCode);
         }catch (Exception e){
             ans.put("success",0);
+            ans.put("ssid"," ");
+            ans.put("errCode",errCode);
+        }
+        return JSON.toJSONString(ans);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteFollower",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
+    public String deleteFollower(@RequestParam Integer aid, @RequestParam String ssid,
+                              @RequestParam Integer followAid){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
+        try{
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
+            followService.deleteFollower(aid,followAid);
+            ssid = securityService.refreshSsid(aid);
+            ans.put("success",1);
+            ans.put("ssid",ssid);
+            ans.put("errCode",errCode);
+        }catch (Exception e){
+            ans.put("success",0);
+            ans.put("ssid"," ");
+            ans.put("errCode",errCode);
+        }
+        return JSON.toJSONString(ans);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/findFollower",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
+    public String findFollower(@RequestParam Integer aid, @RequestParam String ssid){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
+        try{
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
+            List<Integer> followers = followService.findFollower(aid);
+            ans.put("success",1);
+            ans.put("errCode",errCode);
+            ans.put("followers",followers);
+        }catch (Exception e){
+            ans.put("success",0);
+            ans.put("errCode",errCode);
             ans.put("followers"," ");
         }
-        return ans.toJSONString();
+        return JSON.toJSONString(ans);
     }
 
     @ResponseBody
-    @RequestMapping("/findBeFollowed")
+    @RequestMapping(value = "/findBeFollowed",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String findBeFollowed(@RequestParam Integer aid, @RequestParam String ssid){
-        JSONObject ans = new JSONObject();
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
         try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")) throw new SecurityException();
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
             List<Integer> beFollowers = followService.findBeFollowed(aid);
-            String beFollowersJSON = JSON.toJSONString(beFollowers);
             ans.put("success",1);
-            ans.put("beFollowed",beFollowersJSON);
+            ans.put("errCode",errCode);
+            ans.put("beFollowed",beFollowers);
         }catch (Exception e){
             ans.put("success",0);
+            ans.put("errCode",errCode);
             ans.put("beFollowed"," ");
         }
-        return ans.toJSONString();
+        return JSON.toJSONString(ans);
     }
 }

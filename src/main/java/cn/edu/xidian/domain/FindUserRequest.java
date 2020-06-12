@@ -8,6 +8,8 @@ public class FindUserRequest {
     private Integer aid;
     private String userInfo;
     private String userTag;
+    private Integer pageSize;
+    private Integer pageNum;
 
     public Integer getAid() {
         return aid;
@@ -33,12 +35,30 @@ public class FindUserRequest {
         this.userTag = userTag;
     }
 
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public Integer getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(Integer pageNum) {
+        this.pageNum = pageNum;
+    }
+
     @Override
     public String toString() {
         return "FindUserRequest{" +
                 "aid=" + aid +
                 ", userInfo='" + userInfo + '\'' +
                 ", userTag='" + userTag + '\'' +
+                ", pageSize=" + pageSize +
+                ", pageNum=" + pageNum +
                 '}';
     }
 }

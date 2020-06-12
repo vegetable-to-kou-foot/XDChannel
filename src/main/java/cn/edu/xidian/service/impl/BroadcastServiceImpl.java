@@ -31,20 +31,21 @@ public class BroadcastServiceImpl implements BroadcastService {
         for (Object o : bcTagArray) {
             String bcTagNow = (String) o;
             Integer btid = broadcastTagDao.getBroadcastTagBtidByBTagName(bcTagNow);
-            if (btid != null) {
-                String bTagInfoString = broadcastTagDao.getBroadcastTagBTagInfoByBtid(btid);
-                JSONArray bTagInfoArray = JSONArray.parseArray(bTagInfoString);
-                bTagInfoArray.add(bc.getBid());
-                broadcastTagDao.updateBroadcastTagBTagInfoByBtid(btid, bTagInfoArray.toJSONString());
-            } else {
+            if (btid == null) {
                 broadcastTagDao.addBroadcastTag(bcTagNow, "[]");
+                btid = broadcastTagDao.getBroadcastTagBtidByBTagName(bcTagNow);
             }
+            String bTagInfoString = broadcastTagDao.getBroadcastTagBTagInfoByBtid(btid);
+            JSONArray bTagInfoArray = JSONArray.parseArray(bTagInfoString);
+            bTagInfoArray.add(bc.getBid());
+            broadcastTagDao.updateBroadcastTagBTagInfoByBtid(btid, bTagInfoArray.toJSONString());
         }
     }
 
     @Override
-    public void deleteBroadcast(Integer bid) {
+    public void deleteBroadcast(Integer bid, Integer aid) {
         Broadcast bc = broadcastDao.getUBCByBid(bid);
+        if (!bc.getAid().equals(aid))return;
         JSONArray bcTagArray = JSON.parseArray(bc.getBcTag());
         for (Object o:bcTagArray){
             String bcTagNow = (String) o;
@@ -60,8 +61,8 @@ public class BroadcastServiceImpl implements BroadcastService {
     }
 
     @Override
-    public void editBroadcast(Integer bid, String bcScript) {
-        broadcastDao.updateUBCBCScriptByBid(bid,bcScript);
+    public void editBroadcast(Integer bid, String bcScript,long timestp) {
+        broadcastDao.updateUBCBCScriptByBid(bid,bcScript,timestp);
     }
 
     @Override
@@ -79,48 +80,65 @@ public class BroadcastServiceImpl implements BroadcastService {
         if (baseOps.contains(fbr.getFidOp())){
             condition += " AND fid"+fbr.getFidOp()+fbr.getFidVal();
         }else{
-            condition += "1=1";
+            condition += " AND 1=1";
         }
 
         if (baseOps.contains(fbr.getAidOp())){
             condition += " AND aid"+fbr.getAidOp()+fbr.getAidVal();
         }else{
-            condition += "1=1";
+            condition += " AND 1=1";
         }
 
         if (baseOps.contains(fbr.getLikeItOp())){
             condition += " AND likeIt"+fbr.getLikeItOp()+fbr.getLikeItVal();
         }else{
-            condition += "1=1";
+            condition += " AND 1=1";
         }
 
         if (baseOps.contains(fbr.getTimestpOp())){
             condition += " AND timestp"+fbr.getTimestpOp()+fbr.getTimestpVal();
         }else{
-            condition += "1=1";
+            condition += " AND 1=1";
         }
 
-        if (fbr.getBcScript()!=null){
-            condition += " AND bcScript LIKE %"+fbr.getTimestpVal()+"%";
+        if (fbr.getBcScript()!=null && fbr.getBcScript().length() > 0){
+            condition += " AND bcScript LIKE \'%%"+fbr.getBcScript()+"%%\'";
         }else{
-            condition += "1=1";
+            condition += " AND 1=1";
         }
+
+        condition += " ORDER BY bid DESC";
+
+        Integer lines = broadcastDao.getUBCLines();
+
+        Integer x = fbr.getPageSize();
+        Integer y = fbr.getPageNum();
+        int from = x*y-x;
+        Integer to = x*y;
+        if (from < 0)from = 0;
+        if (to > lines)to = lines;
+        if (from > lines)from = lines;
+        if (to < 0)to = 0;
+
+        condition += " LIMIT "+from + "," + to;
+
         List<Broadcast> ansTmp = broadcastDao.getUBCByCond(condition);
+
+        if (ansTmp == null || ansTmp.size() == 0)return Collections.emptyList();
 
         String baseBCTagsString = fbr.getBcTagsString();
         List<String> baseBCTagsList = JSONArray.parseArray(baseBCTagsString,String.class);
 
-        List<Broadcast> ans = Collections.emptyList();
+        List<Broadcast> ans = new ArrayList<>(Collections.emptyList());
 
         for (Broadcast bc : ansTmp){
             String bcTagString  = bc.getBcTag();
             List<String> bcTagList = JSONArray.parseArray(bcTagString,String.class);
-            if (bcTagList.containsAll(bcTagList)){
+            if (bcTagList.containsAll(baseBCTagsList)){
                 ans.add(bc);
             }
         }
 
-        //todo:这里还没考虑limits的条件
         return ans;
 
     }

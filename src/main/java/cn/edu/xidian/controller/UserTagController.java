@@ -3,12 +3,19 @@ package cn.edu.xidian.controller;
 import cn.edu.xidian.service.SecurityService;
 import cn.edu.xidian.service.UserTagService;
 import cn.edu.xidian.service.UtilService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 胡广鹏 on 2020/5/15 10:12
@@ -23,77 +30,93 @@ public class UserTagController {
     UtilService utilService;
 
     @ResponseBody
-    @RequestMapping("/addUserTag")
+    @RequestMapping(value = "/addUserTag",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String addUserTag(@RequestParam Integer aid,@RequestParam String ssid,
-                             @RequestParam String tagName,@RequestParam String tagValue, Model model){
+                             @RequestParam String tagName,@RequestParam String tagValue){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
         try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")) throw new SecurityException();
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
             userTagService.addUserTag(aid,tagName,tagValue);
-            model.addAttribute("success",1);
+            ssid = securityService.refreshSsid(aid);
+            ans.put("success",1);
+            ans.put("ssid",ssid);
+            ans.put("errCode",errCode);
         }catch (Exception e){
-            model.addAttribute("success",0);
+            ans.put("success",0);
+            ans.put("ssid"," ");
+            ans.put("errCode",errCode);
         }
-        return utilService.modelToString(model);
+        return JSON.toJSONString(ans);
     }
 
 
     @ResponseBody
-    @RequestMapping("/deleteUserTag")
+    @RequestMapping(value = "/deleteUserTag",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String deleteUserTag(@RequestParam Integer aid,@RequestParam String ssid,
-                             @RequestParam String tagName, Model model){
+                             @RequestParam String tagName){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
         try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")) throw new SecurityException();
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
             userTagService.deleteUserTagByAid(aid,tagName);
-            model.addAttribute("success",1);
+            ssid = securityService.refreshSsid(aid);
+            ans.put("success",1);
+            ans.put("ssid",ssid);
+            ans.put("errCode",errCode);
         }catch (Exception e){
-            model.addAttribute("success",0);
+            ans.put("success",0);
+            ans.put("ssid"," ");
+            ans.put("errCode",errCode);
         }
-        return utilService.modelToString(model);
+        return JSON.toJSONString(ans);
     }
 
 
     @ResponseBody
-    @RequestMapping("/findUserTag")
-    public String findUserTag(@RequestParam Integer aid,@RequestParam String ssid, Model model){
+    @RequestMapping(value = "/findUserTag",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
+    public String findUserTag(@RequestParam Integer aid,@RequestParam String ssid){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
         try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")) throw new SecurityException();
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
             String userTag = userTagService.findUserTagByAid(aid);
-            if (userTag!=null){
-                model.addAttribute("success",1);
-                model.addAttribute("userTag",userTag);
-            }else{
-                model.addAttribute("success",0);
-                model.addAttribute("userTag"," ");
-            }
+            JSONObject userTagJsonObject = JSONObject.parseObject(userTag);
+            ans.put("success",1);
+            ans.put("ssid",ssid);
+            ans.put("errCode",errCode);
+            ans.put("userTag",userTagJsonObject);
         }catch (Exception e){
-            model.addAttribute("success",0);
-            model.addAttribute("userTag"," ");
+            ans.put("success",0);
+            ans.put("ssid"," ");
+            ans.put("errCode",errCode);
+            ans.put("userTag"," ");
         }
-        return utilService.modelToString(model);
+        return JSON.toJSONString(ans);
     }
 
 
     @ResponseBody
-    @RequestMapping("/findAccountTag")
+    @RequestMapping(value = "/findAccountTag",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String findAccountTag(@RequestParam Integer aid,@RequestParam String ssid,
-                                @RequestParam String tagName, Model model){
+                                @RequestParam String tagName){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
         try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")) throw new SecurityException();
-            String tagList = userTagService.findAccountTagByTagName(tagName);
-            if (tagList!=null){
-                model.addAttribute("success",1);
-                model.addAttribute("accTags",tagList);
-            }else{
-                throw new SecurityException();
-            }
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
+            List<String> accTagsList = userTagService.findAccountTagByTagName(tagName);
+            ans.put("success",1);
+            ans.put("errCode",errCode);
+            ans.put("accTags",accTagsList);
         }catch (Exception e){
-            model.addAttribute("success",0);
-            model.addAttribute("accTags"," ");
+            ans.put("success",1);
+            ans.put("errCode",errCode);
+            ans.put("accTags"," ");
         }
-        return utilService.modelToString(model);
+        return JSON.toJSONString(ans);
     }
 }

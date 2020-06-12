@@ -5,6 +5,7 @@ public class Account {
     private String accName;
     private String userPswd;
     private String email;
+    private String checkInfo;
 
     public Integer getAid() {
         return aid;
@@ -38,12 +39,22 @@ public class Account {
         this.email = email;
     }
 
+    public String getCheckInfo() {
+        return checkInfo;
+    }
+
+    public void setCheckInfo(String checkInfo) {
+        this.checkInfo = checkInfo;
+    }
+
     @Override
     public String toString() {
-        return "{\"aid\":" + aid +
-                ",\"accName\":\"" + accName + '\"' +
-                ",\"userPswd\":\"" + userPswd + '\"' +
-                ",\"email\":\"" + email + '\"' +
+        return "Account{" +
+                "aid=" + aid +
+                ", accName='" + accName + '\'' +
+                ", userPswd='" + userPswd + '\'' +
+                ", email='" + email + '\'' +
+                ", checkInfo='" + checkInfo + '\'' +
                 '}';
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 public interface FollowService {
 
     void addFollower(Integer aid,Integer followAid);
+    void addFollowerNone(Integer aid);
     void deleteFollower(Integer aid,Integer followAid);
     List<Integer> findFollower(Integer aid);
     List<Integer> findBeFollowed(Integer aid);

@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 胡广鹏 on 2020/5/7 0:40
@@ -35,92 +37,113 @@ public class UserInfoController {
     @RequestMapping("/editProfilePic")
     public String editProfilePic(@RequestParam Integer aid,@RequestParam String ssid,
                                  MultipartFile upload,HttpServletRequest request){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
         try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")){
-                return "{\"success\":0}";
-            }
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
             userInfoService.updateUserInfoProfilePicByAid(aid, upload, request);
-            return "{\"success\":1}";
+            ssid = securityService.refreshSsid(aid);
+            ans.put("success",1);
+            ans.put("ssid",ssid);
+            ans.put("errCode",errCode);
         }catch (Exception e){
-            return "{\"success\":0}";
+            ans.put("success",0);
+            ans.put("ssid"," ");
+            ans.put("errCode",errCode);
         }
+        return JSON.toJSONString(ans);
     }
 
     @ResponseBody
     @RequestMapping("/findProfilePic")
-    public String findProfilePic(@RequestParam Integer aid, @RequestParam String ssid, Model model){
+    public String findProfilePic(@RequestParam Integer aid, @RequestParam String ssid){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
         try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")){
-                throw new SecurityException();
-            }
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
             String profilePic = userInfoService.getUserInfoProfilePicByAid(aid);
             if (profilePic!=null){
-                model.addAttribute("success",1);
-                model.addAttribute("profilePic",profilePic);
+                ans.put("success",1);
+                ans.put("errCode",errCode);
+                ans.put("profilePic",profilePic);
             }else{
                 throw new SecurityException();
             }
-        }catch (Exception e){
-            model.addAttribute("success",0);
-            model.addAttribute("profilePic"," ");
-        }
-        return utilService.modelToString(model);
-    }
-
-    @ResponseBody
-    @RequestMapping("/editUserInfo")
-    public String editUserInfo(@RequestParam Integer aid,@RequestParam String ssid,
-                               @RequestParam String userInfo,Model model){
-        try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")){
-                throw new SecurityException();
-            }
-            userInfoService.updateUserInfoUserInfoByAid(aid,userInfo);
-            model.addAttribute("success",1);
-        }catch (Exception e){
-            model.addAttribute("success",0);
-        }
-        return utilService.modelToString(model);
-    }
-
-    @ResponseBody
-    @RequestMapping("/findUserInfo")
-    public String findUserInfo(@RequestParam Integer aid,@RequestParam String ssid,Model model){
-        try{
-            String errCode = securityService.checkSsid(aid,ssid);
-            if (!errCode.equals("OK")){
-                throw new SecurityException();
-            }
-            String userInfo = userInfoService.getUserInfoUserInfoByAid(aid);
-            if (userInfo != null){
-                model.addAttribute("success",1);
-                model.addAttribute("userInfo",userInfo);
-            }else{
-                throw new SecurityException();
-            }
-        }catch (Exception e){
-            model.addAttribute("success",0);
-            model.addAttribute("userInfo"," ");
-        }
-        return utilService.modelToString(model);
-    }
-
-    @ResponseBody
-    @RequestMapping("/findUser")
-    public String findUser(@RequestParam FindUserRequest fur){
-        JSONObject ans = new JSONObject();
-        try{
-            List<UserInfo> userInfos = userInfoService.findUser(fur);
-            ans.put("success",1);
-            ans.put("broadcasts", JSON.toJSONString(userInfos));
         }catch (Exception e){
             ans.put("success",0);
-            ans.put("broadcasts"," ");
+            ans.put("errCode",errCode);
+            ans.put("profilePic"," ");
         }
-        return ans.toJSONString();
+        return JSON.toJSONString(ans);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/editUserInfo",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
+    public String editUserInfo(@RequestParam Integer aid,@RequestParam String ssid,
+                               @RequestParam String userInfo){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
+        try{
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
+            userInfoService.updateUserInfoUserInfoByAid(aid,userInfo);
+            ssid = securityService.refreshSsid(aid);
+            ans.put("success",1);
+            ans.put("ssid",ssid);
+            ans.put("errCode",errCode);
+        }catch (Exception e){
+            ans.put("success",0);
+            ans.put("ssid"," ");
+            ans.put("errCode",errCode);
+        }
+        return JSON.toJSONString(ans);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/findUserInfo",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
+    public String findUserInfo(@RequestParam Integer aid,@RequestParam String ssid){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
+        try{
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
+            String userInfo = userInfoService.getUserInfoUserInfoByAid(aid);
+            if (userInfo != null && userInfo.length() > 0){
+                ans.put("success",1);
+                ans.put("errCode",errCode);
+                ans.put("userInfo",userInfo);
+            }else{
+                throw new SecurityException();
+            }
+        }catch (Exception e){
+            ans.put("success",0);
+            ans.put("errCode",errCode);
+            ans.put("userInfo"," ");
+        }
+        return JSON.toJSONString(ans);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/findUser",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
+    public String findUser(@RequestParam String ssid, FindUserRequest fur){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
+        try{
+            Integer aid = fur.getAid();
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
+            List<Integer> userAids = userInfoService.findUser(fur);
+            ans.put("success",1);
+            ans.put("errCode",errCode);
+            ans.put("userInfos", userAids);
+        }catch (Exception e){
+            ans.put("success",1);
+            ans.put("errCode",errCode);
+            ans.put("userInfos", " ");
+        }
+        return JSON.toJSONString(ans);
     }
 
 }

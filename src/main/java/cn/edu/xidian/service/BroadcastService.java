@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface BroadcastService {
     void addBroadcast(Broadcast bc);
-    void deleteBroadcast(Integer bid);
-    void editBroadcast(Integer bid,String bcScript);
+    void deleteBroadcast(Integer bid,Integer aid);
+    void editBroadcast(Integer bid,String bcScript,long timestp);
     List<Broadcast> findBroadcast(FindBroadcastRequset fbr);
 }

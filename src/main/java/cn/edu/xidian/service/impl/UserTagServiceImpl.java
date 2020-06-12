@@ -29,11 +29,19 @@ public class UserTagServiceImpl implements UserTagService {
         userInfoDao.updateUserInfoUserTagByAid(aid,userTagJSON.toJSONString());
 
         Integer atid = accountTagDao.getAccountTagAtidByATagName(aTagName);
+        if (atid == null){
+            accountTagDao.addAccountTag(aTagName,"{}");
+            atid = accountTagDao.getAccountTagAtidByATagName(aTagName);
+        }
         String accTagString = accountTagDao.getAccountTagATagInfoByAtid(atid);
         JSONObject accTagJSON = JSON.parseObject(accTagString);
         accTagJSON.put(aid.toString(),aTagValue);
         accountTagDao.updateAccountTagATagInfoByAtid(atid,accTagJSON.toJSONString());
+    }
 
+    @Override
+    public void addUserTagNone(Integer aid) {
+        userInfoDao.addUserInfo(aid,"{}","{}"," ");
     }
 
     @Override
@@ -44,6 +52,9 @@ public class UserTagServiceImpl implements UserTagService {
         userInfoDao.updateUserInfoUserTagByAid(aid,userTagJSON.toJSONString());
 
         Integer atid = accountTagDao.getAccountTagAtidByATagName(aTagName);
+        if (atid == null){
+            return;
+        }
         String accTagString = accountTagDao.getAccountTagATagInfoByAtid(atid);
         JSONObject accTagJSON = JSON.parseObject(accTagString);
         accTagJSON.remove(aid.toString());
@@ -56,8 +67,7 @@ public class UserTagServiceImpl implements UserTagService {
     }
 
     @Override
-    public String findAccountTagByTagName(String aTagName) {
-        List<String> accTags = accountTagDao.getAccountTagATagNameByATagName(aTagName+"%%");
-        return JSON.toJSONString(accTags);
+    public List<String> findAccountTagByTagName(String aTagName) {
+        return accountTagDao.getAccountTagATagNameByATagName("%%" + aTagName+"%%");
     }
 }

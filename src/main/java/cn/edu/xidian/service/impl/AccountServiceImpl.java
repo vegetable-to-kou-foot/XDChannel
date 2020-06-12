@@ -2,16 +2,23 @@ package cn.edu.xidian.service.impl;
 
 import cn.edu.xidian.dao.AccountDao;
 import cn.edu.xidian.domain.Account;
+import cn.edu.xidian.domain.email.CodeUtil;
+import cn.edu.xidian.domain.email.SendEmailUtil;
 import cn.edu.xidian.service.AccountService;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 @Service("accountService")
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountDao accountDao;
+    @Autowired
+    private SendEmailUtil sendEmailUtil;
 
     @Override
     public void addAccount(Account account) {
@@ -49,6 +56,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public void updateAccountCheckInfoByAid(String checkInfo, int aid) {
+        accountDao.updateAccountCheckInfoByAid(checkInfo,aid);
+    }
+
+    @Override
     public String findAccountPswdByAid(Integer aid) {
         return accountDao.findAccountPswdByAid(aid);
     }
@@ -64,6 +76,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public String findAccountCheckInfoByAid(Integer aid) {
+        return accountDao.findAccountCheckInfoByAid(aid);
+    }
+
+    @Override
     public Integer findAccountAidByEmail(String email){
         return accountDao.findAccountAidByEmail(email);
     }
@@ -74,6 +91,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Integer findAccountAidByCheckInfo(String checkInfo) {
+        return accountDao.findAccountAidByCheckInfo(checkInfo);
+    }
+
+    @Override
     public List<Account> findAccountByName(String accName){
         return accountDao.findAccountByName(accName);
     }
@@ -81,5 +103,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account findAccountByEmail(String email){
         return accountDao.findAccountByEmail(email);
+    }
+
+    @Override
+    public void sendEmail(String code, String toEmail) throws IOException, MessagingException {
+        sendEmailUtil.sendEmail(code, toEmail);
     }
 }

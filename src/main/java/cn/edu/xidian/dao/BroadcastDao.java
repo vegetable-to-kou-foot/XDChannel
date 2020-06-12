@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface BroadcastDao {
 
+    @Options(useGeneratedKeys=true,keyProperty = "bid")
     @Insert(value = "insert into UserBroadcast (fid,aid,bcScript,likeIt,review,bcTag,timestp,limits) values (#{fid},#{aid},#{bcScript},#{likeIt},#{review},#{bcTag},#{timestp},#{limits})")
-    @Options(useGeneratedKeys=true, keyProperty="bid", keyColumn="bid")
     void addUBC(Broadcast bc);
 
     @Delete("delete from UserBroadcast where bid=#{bid}")
@@ -26,11 +26,14 @@ public interface BroadcastDao {
     @Update("update UserBroadcast set review=#{review} where bid=#{bid}")
     void updateUBCReviewByBid(Integer bid, String review);
 
-    @Update("update UserBroadcast set bcScript=#{bcScript} where bid=#{bid}")
-    void updateUBCBCScriptByBid(Integer bid, String bcScript);
+    @Update("update UserBroadcast set bcScript=#{bcScript},timestp=#{timestp} where bid=#{bid}")
+    void updateUBCBCScriptByBid(@Param("bid") Integer bid, @Param("bcScript") String bcScript,@Param("timestp") long timestp);
 
     @Select("select * from UserBroadcast where bid=#{bid}")
     Broadcast getUBCByBid(Integer bid);
+
+    @Select("select count(*) from UserBroadcast")
+    Integer getUBCLines();
 
     @Select("select * from UserBroadcast where aid=#{aid}")
     List<Broadcast> getUBCByAid(Integer aid);

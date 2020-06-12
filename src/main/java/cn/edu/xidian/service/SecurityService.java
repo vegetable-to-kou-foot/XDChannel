@@ -9,4 +9,5 @@ public interface SecurityService {
     String getAidSsidSsidByAid(Integer aid);
     long getAidSsidTimeByAid(Integer aid);
     String checkSsid(Integer aid,String ssid);
+    String refreshSsid(Integer aid);
 }

@@ -1,7 +1,7 @@
 # 二、接口及数据格式
 > 如果README.md与README_2.md内容有出入，以README_2.md为准。
 ## 账户CRUD
-/addAccount
+/addAccount:验收通过
 > I:{"accName":"xxx","userPswd":"xxx","email":"xxx"}
 >
 > O:{"success":"0 or 1"}
@@ -47,15 +47,17 @@
 > Password wrong:密码错误。
 
 
-`/editAccount/editUserEmail`
+`/editAccount/editUserEmail`:计划取消，可以用先注销后注册来替代
 > {"aid":"xxx","ssid":"xxx","old_email":"xxx"}
 > {"aid":"xxx","ssid_2":"xxx","new_email":"xxx"}
 >
 > 修改邮箱必须先点击旧邮箱的链接进入邮箱修改页，然后输入新邮箱并点击新邮箱的链接。
 > 这里的安全性需要仔细考虑，但是因为功能相对独立，可以等会儿再实现。
 
-/login
+/login:验收通过
 > I:{"email":"xxx","password":"xxx"}
+>
+> 用MD5将"email+password"加密加密至32位，作为password传过来
 >
 > O:{"success":"0 or 1","aid":"xxx","ssid":"xxx","errCode":"xxx"}
 >
@@ -78,7 +80,7 @@
 
 **要实现这个，还要修改数据库**
 
-/editUserInfo
+/editUserInfo:验收通过
 > I:{"aid":"xxx","ssid":"xxx","userInfo":"打包成JSON格式的字符串"}
 >
 > O:{"success":"0 or 1"}
@@ -87,7 +89,7 @@
 > 一般解决办法是对一个连接分配一个短时间有效的随机数，随机数对上了才能提供服务。
 > 这个随机数就叫ssid吧。
 
-/findUserInfo
+/findUserInfo:验收通过
 > I:{"aid":"xxx","ssid":"xxx"}
 >
 > O:{"success":"0 or 1","userInfo":"打包成JSON的字符串"}
@@ -96,24 +98,24 @@
     AidSsid[aid,ssid,time]
 
 ## 用户标签CRUD
-/addUserTag
+/addUserTag:验收通过
 > I:{"aid":"xxx","ssid":"xxx","tagName":"xxx","tagValue":"xxx"}
 >
 > O:{"success":"0 or 1"}
 
-/deleteUserTag
+/deleteUserTag:验收通过
 > I:{"aid":"xxx","ssid":"xxx","tagName":"xxx"}
 >
 > O:{"success":"0 or 1"}
 
-/findUserTag
+/findUserTag:验收通过
 > I:{"aid":"xxx","ssid":"xxx"}
 >
 > O:{"success":"0 or 1","userTag":"JSON"}
 >
 > 查询这个人的所有tag和值
 
-/findAccountTag
+/findAccountTag:验收通过
 > I:{"aid":"xxx","ssid":"xxx","tagName":"xxx"}
 >
 > O:{"success":"0 or 1","accTags":["TagA","TagB"]}
@@ -125,30 +127,32 @@
     AccountTag[atid,aTagName,aTagInfo]
 
 ## 说说（广播）CRUD
-/addBroadcast
+/addBroadcast:验收通过
 > I:{"aid":"xxx","ssid":"xxx","fid":"xxx","bcScript":"xxx",
-> "bcTag":"xxx","time":"xxx","limit":"xxx"}
+> "bcTag":"xxx","timestp":"xxx","limits":"xxx"}
 >
 > O:{"success":"0 or 1"}
 >
 > 因为回复和发说说共用了这个接口，所以需要提供fid。
 
-/deleteBroadcast
+/deleteBroadcast:验收通过
 > I:{"aid":"xxx","ssid":"xxx","bid":"xxx"}
 >
 > O:{"success":"0 or 1"}
 
-/editBroadcast
+/editBroadcast:验收通过
 > I:{"aid":"xxx","ssid":"xxx","bid":"xxx",~~"bcScript":"xxx",
-> "bcTag":"xxx","time":"xxx",~~"limit":"xxx"}
+> "bcTag":"xxx","time":"xxx",~~"limits":"xxx"}
 >
 > O:{"success":"0 or 1"}
 
-/findBroadcast
+/findBroadcast:验收通过
 > I:{~~"bid":"xxx",~~"bid_op":"任何允许的符号，如>","bid_val":"xxx",
 > ~~"fid":"xxx",~~"fid_op":"任何允许的符号，如>","fid_val":"xxx",
 > aid/broadcastScript/likeIt/timestp同上,
-> "bcTag":"{"tag_1","tag_2"}"}
+> "bcTag":["tag_1","tag_2"],
+> "numPerPage":xxx,"page":xxx
+> }
 >
 > O:{"success":"0 or 1","broadCasts":[
 > {"bid":"xxx","fid":"xxx","broadcastScript":"xxx",
@@ -181,12 +185,12 @@
 > O:{"success":"0 or 1"}
 
 /findFollower
-> I:{"aid":"xxx","ssid":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","numPerPage":xxx,"page":xxx}
 >
 > O:{"success":"0 or 1","followers":[Account_1,Account_2]}
 
 /findBeFollowed
-> I:{"aid":"xxx","ssid":"xxx"}
+> I:{"aid":"xxx","ssid":"xxx","numPerPage":xxx,"page":xxx}
 >
 > O:{"success":"0 or 1","beFollowed":[Account_1,Account_2]}
 
@@ -207,7 +211,9 @@
 > "userTag":"[
 >   {"tag":"xxx","tagOp":"允许的操作符","tagVal":"xxx"},
 >   {"tag":"xxx","tagOp":"允许的操作符","tagVal":"xxx"},...
->   ]"}
+>   ]",
+> "numPerPage":xxx,"page":xxx
+> }
 >
 > O:{"success":"0 or 1","users":[UserInfo_1,UserInfo_2]}
 >

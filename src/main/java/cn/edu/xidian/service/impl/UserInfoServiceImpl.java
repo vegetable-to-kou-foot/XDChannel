@@ -14,10 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by 胡广鹏 on 2020/5/14 21:24
@@ -30,6 +27,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public void updateUserInfoProfilePicByAid(Integer aid, MultipartFile upload, HttpServletRequest request) {
+        //todo:搬到服务器上的时候需要修改
         String filePath = "F:\\WEB_Developing\\XDChannel\\src\\main\\webapp\\images\\"; //定义上传文件的存放位置
         String fileName = upload.getOriginalFilename();  //获取上传文件的名字
         //判断文件夹是否存在,不存在则创建
@@ -64,9 +62,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public List<UserInfo> findUser(FindUserRequest fur) {
-        List<UserInfo> ansTmp = Collections.emptyList();
-        List<UserInfo> ans = Collections.emptyList();
+    public List<Integer> findUser(FindUserRequest fur) {
+        List<UserInfo> ansTmp = new ArrayList<>(Collections.emptyList());
+        List<Integer> ans = new ArrayList<>(Collections.emptyList());
         //用userInfo过滤一次
         List<UserInfo> userInfoList = userInfoDao.findUserInfoAll();
         JSONObject baseUserInfo = JSON.parseObject(fur.getUserInfo());
@@ -77,14 +75,29 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
         }
 
+        if(ansTmp.size() == 0)return ans;
+
         //用userTag再过滤一次
         JSONArray baseUserTagCond = JSON.parseArray(fur.getUserTag());
         for (UserInfo ui : ansTmp){
             JSONObject nowUserTag = JSON.parseObject(ui.getUserTag());
             if (JSONAAccordB(nowUserTag,baseUserTagCond)){
-                ans.add(ui);
+                ans.add(ui.getAid());
             }
         }
+
+        //用翻页过滤一次
+        Integer pageSize = fur.getPageSize();
+        Integer pageNum = fur.getPageNum();
+        Integer st = pageSize*(pageNum-1);
+        Integer ed = pageSize*pageNum;
+        Integer len = ans.size();
+        if (st > len) st = len;
+        if (st < 0) st = 0;
+        if (ed > len) ed = len;
+        if (ed < 0) ed = 0;
+
+        ans = ans.subList(st,ed);
 
         return ans;
 

@@ -36,15 +36,21 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
+    public void addFollowerNone(Integer aid) {
+        followDao.addFollow(aid,"[]");
+        beFollowedDao.addBeFollowed(aid,"[]");
+    }
+
+    @Override
     public void deleteFollower(Integer aid, Integer followAid) {
         String followInfoString = followDao.getFollowFollowInfoByAid(aid);
         List<Integer> followInfo = JSONObject.parseArray(followInfoString,Integer.class);
-        if (followInfo.contains(followAid)) followInfo.remove(followAid);
+        followInfo.remove(followAid);
         followDao.updateFollowFollowInfoByAid(aid,JSON.toJSONString(followInfo));
 
         String beFollowedInfoString = beFollowedDao.getBeFollowedBeFollowedInfoByAid(followAid);
         List<Integer> beFollowedInfo = JSONObject.parseArray(beFollowedInfoString,Integer.class);
-        if (beFollowedInfo.contains(aid)) beFollowedInfo.remove(aid);
+        beFollowedInfo.remove(aid);
         followDao.updateFollowFollowInfoByAid(followAid,JSON.toJSONString(beFollowedInfo));
     }
 

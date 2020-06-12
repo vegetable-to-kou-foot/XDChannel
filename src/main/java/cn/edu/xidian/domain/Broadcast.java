@@ -11,10 +11,10 @@ public class Broadcast {
     private Integer likeIt;
     private String review;
     private String bcTag;
-    private Integer timestp;
+    private long timestp;
     private String limits;
 
-    public Broadcast(Integer bid, Integer fid, Integer aid, String bcScript, Integer likeIt, String review, String bcTag, Integer timestp, String limits) {
+    public Broadcast(Integer bid, Integer fid, Integer aid, String bcScript, Integer likeIt, String review, String bcTag, long timestp, String limits) {
         this.bid = bid;
         this.fid = fid;
         this.aid = aid;
@@ -82,11 +82,11 @@ public class Broadcast {
         this.bcTag = bcTag;
     }
 
-    public Integer getTimestp() {
+    public long getTimestp() {
         return timestp;
     }
 
-    public void setTimestp(Integer timestp) {
+    public void setTimestp(long timestp) {
         this.timestp = timestp;
     }
 
