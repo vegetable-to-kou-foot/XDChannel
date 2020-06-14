@@ -10,10 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +27,7 @@ public class BroadcastController {
     @Autowired
     BroadcastService broadcastService;
 
+    @CrossOrigin
     @ResponseBody
     @RequestMapping(value="/addBroadcast",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String addBroadcast(@RequestParam Integer aid, @RequestParam String ssid,@RequestParam Integer fid,
@@ -51,6 +49,7 @@ public class BroadcastController {
             ans.put("ssid",ssid);
             ans.put("errCode",errCode);
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
             ans.put("success",0);
             ans.put("ssid"," ");
             ans.put("errCode",errCode);
@@ -58,6 +57,7 @@ public class BroadcastController {
         return JSON.toJSONString(ans);
     }
 
+    @CrossOrigin
     @ResponseBody
     @RequestMapping(value = "/deleteBroadcast",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String deleteBroadcast(@RequestParam Integer aid,@RequestParam String ssid,@RequestParam Integer bid){
@@ -72,6 +72,7 @@ public class BroadcastController {
             ans.put("ssid",ssid);
             ans.put("errCode",errCode);
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
             ans.put("success",0);
             ans.put("ssid"," ");
             ans.put("errCode",errCode);
@@ -79,6 +80,7 @@ public class BroadcastController {
         return JSON.toJSONString(ans);
     }
 
+    @CrossOrigin
     @ResponseBody
     @RequestMapping(value = "/editBroadcast",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String editBroadcast(@RequestParam Integer aid, @RequestParam String ssid,@RequestParam Integer bid,
@@ -94,6 +96,7 @@ public class BroadcastController {
             ans.put("ssid",ssid);
             ans.put("errCode",errCode);
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
             ans.put("success",0);
             ans.put("ssid"," ");
             ans.put("errCode",errCode);
@@ -101,6 +104,7 @@ public class BroadcastController {
         return JSON.toJSONString(ans);
     }
 
+    @CrossOrigin
     @ResponseBody
     @RequestMapping(value = "/findBroadcast",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     //todo:所有内容加上limit分页查询功能
@@ -111,11 +115,12 @@ public class BroadcastController {
         try{
             errCode = securityService.checkSsid(aid,ssid);
             if (!"OK".equals(errCode))throw new SecurityException();
-            List<Broadcast> broadcasts = broadcastService.findBroadcast(fbr);
+            List<JSONObject> broadcasts = broadcastService.findBroadcast(fbr);
             ans.put("success",1);
-            ans.put("broadcasts",JSON.toJSONString(broadcasts));
+            ans.put("broadcasts",broadcasts);
             ans.put("errCode",errCode);
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
             ans.put("success",0);
             ans.put("broadcasts"," ");
             ans.put("errCode",errCode);

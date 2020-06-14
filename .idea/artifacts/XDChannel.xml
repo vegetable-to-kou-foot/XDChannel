@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="XDChannel">
+    <output-path>$PROJECT_DIR$/out/artifacts/XDChannel</output-path>
+    <root id="archive" name="XDChannel.war">
+      <element id="artifact" artifact-name="XDChannel:war exploded" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/main/webapp" />
+    </root>
+  </artifact>
+</component>

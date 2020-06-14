@@ -1,11 +1,13 @@
 package cn.edu.xidian.domain.email;
 
 import cn.edu.xidian.domain.Account;
+import com.sun.mail.util.MailSSLSocketFactory;
 import org.springframework.stereotype.Component;
 
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -19,55 +21,40 @@ import java.util.Properties;
 @Component
 public class SendEmailUtil {
 
-    /*
-     *发送邮件
-     * @param toEmail 目的地
-     * @param code 唯一激活码
-     * @return
-     */
-    public void sendEmail(String code, String toEmail) throws IOException, AddressException, MessagingException {
-
-        String to = toEmail;
-        String subject = "邮箱验证";
-        //todo:这里的地址要修改为服务器的地址
+    public static void sendEmail(String code, String to) {
         String content = "<html><head></head><body><h1>欢迎您使用XDChannel,激活请复制以下链接到浏览器打开</h1><h3>" +
-                "https://localhost:8443/XDChannel/confirmAddAccount?code=" + code
+                "https://39.99.203.158:8443/XDChannel/confirmAddAccount?code=" + code
                 + "</h3></body></html>";
+        Properties props = new Properties();
+        props.put("username", "2904988983@qq.com");
+        props.put("password", "*");
 
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.qq.com");
-        properties.put("mail.smtp.port", "25");
-        properties.put("mail.smtp.auth", "true");
+        //网易的smtp服务器地址
+        props.put("mail.smtp.host", "smtp.qq.com");
+        //SSLSocketFactory类的端口
+        props.put("mail.smtp.socketFactory.port", "465");
+        //SSLSocketFactory类
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.auth", "true");
+        //网易提供的ssl加密端口,QQ邮箱也是该端口
+        props.put("mail.smtp.port", "465");
 
-        //发送者的邮箱和授权码
-        //todo:上传github之前删除这里的帐号密码
-        Authenticator authenticator = new EmailAuthenticator("2904988983@qq.com", "*");
-        Session sendMailSession = javax.mail.Session.getDefaultInstance(properties, authenticator);
-        MimeMessage mailMessage = new MimeMessage(sendMailSession);
-        //邮箱的发送者
+        Session defaultInstance = Session.getDefaultInstance(props);
         try {
-            mailMessage.setFrom(new InternetAddress("2904988983@qq.com"));
+            Session session = Session.getInstance(props, null);
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(props.getProperty("username")));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setSubject("XDChannel 注册验证");
+            // 正文和响应头
+            message.setContent(content, "text/html;charset=UTF-8");
+            message.saveChanges();
+            Transport transport = defaultInstance.getTransport("smtp");
+            transport.connect(props.getProperty("mail.smtp.host"), props.getProperty("username"), props.getProperty("password"));
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
         } catch (MessagingException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
-        //邮箱接收
-        // Message.RecipientType.TO属性表示接收者的类型为TO
-        mailMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-        //发送邮件的标题
-        mailMessage.setSubject(subject, "UTF-8");
-        //发送邮件的日期
-        mailMessage.setSentDate(new Date());
-
-        //MiniMultipart类是一个容器类，包含MimeBodyPart类型的对象
-        Multipart mainPart = new MimeMultipart();
-
-        //创建一个包含HTML内容的MimeBodyPart
-        BodyPart html = new MimeBodyPart();
-        //设置邮件的内容的格式和字节码
-        html.setContent(content.trim(), "text/html; charset=utf-8");
-        mainPart.addBodyPart(html);
-        mailMessage.setContent(mainPart);
-        Transport.send(mailMessage);
     }
 }

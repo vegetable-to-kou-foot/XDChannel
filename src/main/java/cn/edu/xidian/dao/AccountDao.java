@@ -59,4 +59,13 @@ public interface AccountDao {
 
     @Select("select * from Account where email=#{email}")
     Account findAccountByEmail(String email);
+
+    @Select({
+            "<script>" +
+                    "select accName from Account where aid in " +
+                    "<foreach item = 'aidItem' index = 'index' collection = 'aidList' open='(' separator=',' close=')'>" +
+                    "#{aidItem}" +
+                    "</foreach>"+
+                    "</script>"})
+    List<String> findAccountAccNameByAidList(@Param("aidList") List<Integer> aidList);
 }

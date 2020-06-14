@@ -8,7 +8,10 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 胡广鹏 on 2020/5/15 10:20
@@ -22,7 +25,7 @@ public class UserTagServiceImpl implements UserTagService {
     AccountTagDao accountTagDao;
 
     @Override
-    public void addUserTag(Integer aid, String aTagName, String aTagValue) {
+    public void addUserTag(Integer aid, String aTagName, Integer aTagValue) {
         String userTagString = userInfoDao.getUserInfoUserTagByAid(aid);
         JSONObject userTagJSON = JSON.parseObject(userTagString);
         userTagJSON.put(aTagName,aTagValue);
@@ -67,7 +70,24 @@ public class UserTagServiceImpl implements UserTagService {
     }
 
     @Override
-    public List<String> findAccountTagByTagName(String aTagName) {
-        return accountTagDao.getAccountTagATagNameByATagName("%%" + aTagName+"%%");
+    public List<JSONObject> findAccountTagByTagName(String aTagName) {
+        List<String> accTagsList = accountTagDao.getAccountTagATagNameByATagName("%%" + aTagName+"%%");
+        List<JSONObject> accTagsArray = new ArrayList<>(Collections.emptyList());
+        if (!(accTagsList == null || accTagsList.size() == 0)){
+            for (String s : accTagsList){
+                JSONObject tmpJsonObject = new JSONObject();
+                List<Integer> tmpInteger = new ArrayList<>(Collections.emptyList());
+                String aidToVals = accountTagDao.getAccountTagATagInfoByATagName(s);
+                JSONObject aidToValsJsonObject = JSONObject.parseObject(aidToVals);
+                if (!(aidToValsJsonObject == null || aidToValsJsonObject.isEmpty())){
+                    for (Map.Entry<String,Object> entry: aidToValsJsonObject.entrySet()){
+                        tmpInteger.add(Integer.valueOf(entry.getKey()));
+                    }
+                }
+                tmpJsonObject.put(s,tmpInteger);
+                accTagsArray.add(tmpJsonObject);
+            }
+        }
+        return accTagsArray;
     }
 }

@@ -1,5 +1,9 @@
 package cn.edu.xidian.domain;
 
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.List;
+
 /**
  * Created by 胡广鹏 on 2020/5/16 12:01
  */
@@ -27,13 +31,6 @@ public class FindUserRequest {
         this.userInfo = userInfo;
     }
 
-    public String getUserTag() {
-        return userTag;
-    }
-
-    public void setUserTag(String userTag) {
-        this.userTag = userTag;
-    }
 
     public Integer getPageSize() {
         return pageSize;
@@ -51,12 +48,20 @@ public class FindUserRequest {
         this.pageNum = pageNum;
     }
 
+    public String getUserTag() {
+        return userTag;
+    }
+
+    public void setUserTag(String userTag) {
+        this.userTag = userTag;
+    }
+
     @Override
     public String toString() {
         return "FindUserRequest{" +
                 "aid=" + aid +
                 ", userInfo='" + userInfo + '\'' +
-                ", userTag='" + userTag + '\'' +
+                ", userTag=" + userTag +
                 ", pageSize=" + pageSize +
                 ", pageNum=" + pageNum +
                 '}';

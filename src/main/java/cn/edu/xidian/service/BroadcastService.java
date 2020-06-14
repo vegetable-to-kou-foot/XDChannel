@@ -2,6 +2,7 @@ package cn.edu.xidian.service;
 
 import cn.edu.xidian.domain.Broadcast;
 import cn.edu.xidian.domain.FindBroadcastRequset;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
 
@@ -12,5 +13,5 @@ public interface BroadcastService {
     void addBroadcast(Broadcast bc);
     void deleteBroadcast(Integer bid,Integer aid);
     void editBroadcast(Integer bid,String bcScript,long timestp);
-    List<Broadcast> findBroadcast(FindBroadcastRequset fbr);
+    List<JSONObject> findBroadcast(FindBroadcastRequset fbr);
 }

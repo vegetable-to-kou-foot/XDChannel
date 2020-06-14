@@ -67,7 +67,7 @@ public class AccountTest {
 
     @Test
     public void loginTest(){
-        String s = HttpUtil.sendPost("http://localhost:8080/login", "email=\"9999@qq.com\"&password=\"159\"");
+        String s = HttpUtil.sendPost("http://39.99.203.158:8080/login", "email=\"9999@qq.com\"&password=\"159\"");
         System.out.println(s);
     }
 

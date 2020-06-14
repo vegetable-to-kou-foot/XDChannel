@@ -31,7 +31,7 @@
     <!-- 不明白这里为啥又配置一遍，或许可以直接读SqlMapConfig.xml，只是教程里没有这么干而已 -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/xdc"/>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/xdc?serverTimezone=GMT%2B8&amp;useSSL=false"/>
         <property name="user" value="${username}"/>
         <property name="password" value="${password}"/>
     </bean>

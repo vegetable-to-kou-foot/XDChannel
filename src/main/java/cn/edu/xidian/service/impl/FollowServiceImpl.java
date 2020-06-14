@@ -32,7 +32,7 @@ public class FollowServiceImpl implements FollowService {
         String beFollowedInfoString = beFollowedDao.getBeFollowedBeFollowedInfoByAid(followAid);
         List<Integer> beFollowedInfo = JSONObject.parseArray(beFollowedInfoString,Integer.class);
         if (!beFollowedInfo.contains(aid)) beFollowedInfo.add(aid);
-        followDao.updateFollowFollowInfoByAid(followAid,JSON.toJSONString(beFollowedInfo));
+        beFollowedDao.updateBeFollowedBeFollowedInfoByAid(followAid,JSON.toJSONString(beFollowedInfo));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class FollowServiceImpl implements FollowService {
         String beFollowedInfoString = beFollowedDao.getBeFollowedBeFollowedInfoByAid(followAid);
         List<Integer> beFollowedInfo = JSONObject.parseArray(beFollowedInfoString,Integer.class);
         beFollowedInfo.remove(aid);
-        followDao.updateFollowFollowInfoByAid(followAid,JSON.toJSONString(beFollowedInfo));
+        beFollowedDao.updateBeFollowedBeFollowedInfoByAid(followAid,JSON.toJSONString(beFollowedInfo));
     }
 
     @Override

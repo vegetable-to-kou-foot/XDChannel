@@ -5,16 +5,14 @@
   Time: 17:30
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Title</title>
 </head>
 <body>
 
-<a href="account/findAll">测试</a>
-
-<h3>测试保存</h3>
+<h3>可以注册了哦</h3>
 
 <form action="addAccount" method="post">
     姓名：<input type="text" name="accName"/><br/>
@@ -23,13 +21,7 @@
     <input type="submit" value="保存"/><br/>
 </form>
 
-<h2>图片上传</h2>
-<form action="editProfilePic" method="post" enctype="multipart/form-data">
-    图片:<input type="file"  name="upload"/><br/>
-    <input type="submit" value="提交"/>
-</form>
-
-<img src="images/50abc705-fb49-40bc-a94c-b2190050a0e8MGSV.png"/>
+<img src="https://39.99.203.158:8443/XDChannel/images/3ace5e5b-1854-485c-b5ae-d473d5aaa0d5BlackCat.jpg" alt="猫猫！"/>
 
 </body>
 </html>

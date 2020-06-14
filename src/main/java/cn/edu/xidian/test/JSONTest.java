@@ -1,6 +1,9 @@
 package cn.edu.xidian.test;
 
+import cn.edu.xidian.dao.UserInfoDao;
 import cn.edu.xidian.domain.Account;
+import cn.edu.xidian.domain.UserInfo;
+import cn.edu.xidian.service.UserInfoService;
 import cn.edu.xidian.service.UserTagService;
 import cn.edu.xidian.service.impl.UserTagServiceImpl;
 import com.alibaba.fastjson.JSON;
@@ -55,8 +58,11 @@ public class JSONTest {
         strList.add("美食");
         map.put("strList",strList);
         JSONObject jsonObject = JSONObject.parseObject(tmp);
+        jsonObject.put("ACM",80);
+        jsonObject.put("xxx",90);
+        jsonObject.put("ACM",90);
         map.put("jsonObject",jsonObject);
-        List<String> accTagsList = userTagService.findAccountTagByTagName("b");
+        List<JSONObject> accTagsList = userTagService.findAccountTagByTagName("b");
         map.put("accTagList",accTagsList);
         System.out.println(JSON.toJSONString(map));
         System.out.println(JSON.toJSONString(strList));
@@ -64,25 +70,28 @@ public class JSONTest {
 
     @Test
     public void ListTest(){
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        UserInfoService userInfoService = (UserInfoService) applicationContext.getBean("userInfoService");
         List<Integer> list = new ArrayList<>(Collections.emptyList());
-        list.add(1);
-        list.add(3);
-        list.add(5);
-        list.add(7);
-        list.add(9);
-        list.add(11);
-        list.add(13);
-        Integer pageSize = 10;
-        Integer pageNum = 1;
-        Integer st = pageSize*(pageNum-1);
-        Integer ed = pageSize*pageNum;
-        Integer len = list.size();
-        if (st > len) st = len;
-        if (st < 0) st = 0;
-        if (ed > len) ed = len;
-        if (ed < 0) ed = 0;
+        //list.add(2);
+        //list.add(3);
+        List<JSONObject> userInfos = userInfoService.getUserInfoByAidList(list);
+        System.out.println(userInfos);
+    }
 
-        list = list.subList(st,ed);
-        System.out.println(list);
+    @Test
+    public void DaoTest(){
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        UserInfoDao userInfoDao = (UserInfoDao) applicationContext.getBean("userInfoDao");
+        List<UserInfo> userInfoList = userInfoDao.findUserInfoAll();
+        String userInfoString = userInfoDao.findUserInfoUserInfoByAid(2);
+        System.out.println(userInfoList);
+        System.out.println(userInfoString);
+    }
+
+    @Test
+    public void ParseTest(){
+        System.out.println(System.getProperty("user.dir"));
+
     }
 }

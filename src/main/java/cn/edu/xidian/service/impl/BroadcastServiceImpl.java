@@ -66,7 +66,7 @@ public class BroadcastServiceImpl implements BroadcastService {
     }
 
     @Override
-    public List<Broadcast> findBroadcast(FindBroadcastRequset fbr) {
+    public List<JSONObject> findBroadcast(FindBroadcastRequset fbr) {
         String condition = "";
         String baseString = ">,<,=";
         Set<String> baseOps = new HashSet<>(Arrays.asList(baseString.split(",")));
@@ -129,13 +129,16 @@ public class BroadcastServiceImpl implements BroadcastService {
         String baseBCTagsString = fbr.getBcTagsString();
         List<String> baseBCTagsList = JSONArray.parseArray(baseBCTagsString,String.class);
 
-        List<Broadcast> ans = new ArrayList<>(Collections.emptyList());
+        List<JSONObject> ans = new ArrayList<>(Collections.emptyList());
 
         for (Broadcast bc : ansTmp){
             String bcTagString  = bc.getBcTag();
             List<String> bcTagList = JSONArray.parseArray(bcTagString,String.class);
             if (bcTagList.containsAll(baseBCTagsList)){
-                ans.add(bc);
+                JSONObject tmp = (JSONObject)JSONObject.toJSON(bc);
+                List<String> tmp2 = JSON.parseArray(bc.getBcTag(),String.class);
+                tmp.put("bcTag",tmp2);
+                ans.add(tmp);
             }
         }
 

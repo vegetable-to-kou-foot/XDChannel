@@ -1,5 +1,7 @@
 package cn.edu.xidian.service;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.List;
 
 /**
@@ -7,9 +9,9 @@ import java.util.List;
  */
 public interface UserTagService {
 
-    void addUserTag(Integer aid,String aTagName,String aTagValue);
+    void addUserTag(Integer aid,String aTagName,Integer aTagValue);
     void addUserTagNone(Integer aid);
     void deleteUserTagByAid(Integer aid,String aTagName);
     String findUserTagByAid(Integer aid);
-    List<String> findAccountTagByTagName(String aTagName);
+    List<JSONObject> findAccountTagByTagName(String aTagName);
 }

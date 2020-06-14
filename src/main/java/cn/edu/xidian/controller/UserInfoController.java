@@ -33,21 +33,23 @@ public class UserInfoController {
     private UtilService utilService;
 
     //该代码来自：https://www.cnblogs.com/xQlover/p/9898255.html
+    @CrossOrigin
     @ResponseBody
     @RequestMapping("/editProfilePic")
     public String editProfilePic(@RequestParam Integer aid,@RequestParam String ssid,
-                                 MultipartFile upload,HttpServletRequest request){
+                                 MultipartFile upload){
         Map<String,Object> ans = new HashMap<>();
         String errCode = " ";
         try{
             errCode = securityService.checkSsid(aid,ssid);
             if (!"OK".equals(errCode))throw new SecurityException();
-            userInfoService.updateUserInfoProfilePicByAid(aid, upload, request);
+            userInfoService.updateUserInfoProfilePicByAid(aid, upload);
             ssid = securityService.refreshSsid(aid);
             ans.put("success",1);
             ans.put("ssid",ssid);
             ans.put("errCode",errCode);
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
             ans.put("success",0);
             ans.put("ssid"," ");
             ans.put("errCode",errCode);
@@ -55,6 +57,7 @@ public class UserInfoController {
         return JSON.toJSONString(ans);
     }
 
+    @CrossOrigin
     @ResponseBody
     @RequestMapping("/findProfilePic")
     public String findProfilePic(@RequestParam Integer aid, @RequestParam String ssid){
@@ -72,6 +75,7 @@ public class UserInfoController {
                 throw new SecurityException();
             }
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
             ans.put("success",0);
             ans.put("errCode",errCode);
             ans.put("profilePic"," ");
@@ -79,6 +83,7 @@ public class UserInfoController {
         return JSON.toJSONString(ans);
     }
 
+    @CrossOrigin
     @ResponseBody
     @RequestMapping(value = "/editUserInfo",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String editUserInfo(@RequestParam Integer aid,@RequestParam String ssid,
@@ -94,6 +99,7 @@ public class UserInfoController {
             ans.put("ssid",ssid);
             ans.put("errCode",errCode);
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
             ans.put("success",0);
             ans.put("ssid"," ");
             ans.put("errCode",errCode);
@@ -101,6 +107,7 @@ public class UserInfoController {
         return JSON.toJSONString(ans);
     }
 
+    @CrossOrigin
     @ResponseBody
     @RequestMapping(value = "/findUserInfo",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String findUserInfo(@RequestParam Integer aid,@RequestParam String ssid){
@@ -110,14 +117,16 @@ public class UserInfoController {
             errCode = securityService.checkSsid(aid,ssid);
             if (!"OK".equals(errCode))throw new SecurityException();
             String userInfo = userInfoService.getUserInfoUserInfoByAid(aid);
+            JSONObject userInfoJsonObject = JSONObject.parseObject(userInfo);
             if (userInfo != null && userInfo.length() > 0){
                 ans.put("success",1);
                 ans.put("errCode",errCode);
-                ans.put("userInfo",userInfo);
+                ans.put("userInfo",userInfoJsonObject);
             }else{
                 throw new SecurityException();
             }
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
             ans.put("success",0);
             ans.put("errCode",errCode);
             ans.put("userInfo"," ");
@@ -125,6 +134,7 @@ public class UserInfoController {
         return JSON.toJSONString(ans);
     }
 
+    @CrossOrigin
     @ResponseBody
     @RequestMapping(value = "/findUser",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
     public String findUser(@RequestParam String ssid, FindUserRequest fur){
@@ -135,11 +145,35 @@ public class UserInfoController {
             errCode = securityService.checkSsid(aid,ssid);
             if (!"OK".equals(errCode))throw new SecurityException();
             List<Integer> userAids = userInfoService.findUser(fur);
+            List<JSONObject> userInfos = userInfoService.getUserInfoByAidList(userAids);
             ans.put("success",1);
             ans.put("errCode",errCode);
-            ans.put("userInfos", userAids);
+            ans.put("userInfos", userInfos);
         }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
+            ans.put("success",0);
+            ans.put("errCode",errCode);
+            ans.put("userInfos", " ");
+        }
+        return JSON.toJSONString(ans);
+    }
+
+    @CrossOrigin
+    @ResponseBody
+    @RequestMapping(value = "/findUserByList",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
+    public String findUserByList(@RequestParam Integer aid,@RequestParam String ssid,@RequestParam List<Integer> aidList){
+        Map<String,Object> ans = new HashMap<>();
+        String errCode = " ";
+        try{
+            errCode = securityService.checkSsid(aid,ssid);
+            if (!"OK".equals(errCode))throw new SecurityException();
+            List<JSONObject> userInfos = userInfoService.getUserInfoByAidList(aidList);
             ans.put("success",1);
+            ans.put("errCode",errCode);
+            ans.put("userInfos", userInfos);
+        }catch (Exception e){
+            if ("OK".equals(errCode))errCode = "Exception";
+            ans.put("success",0);
             ans.put("errCode",errCode);
             ans.put("userInfos", " ");
         }

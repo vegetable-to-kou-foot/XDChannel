@@ -30,6 +30,9 @@ public interface AccountTagDao {
     @Select("select aTagInfo from AccountTag where atid=#{atid}")
     String getAccountTagATagInfoByAtid(Integer atid);
 
+    @Select("select aTagInfo from AccountTag where aTagName=#{aTagName}")
+    String getAccountTagATagInfoByATagName(String aTagName);
+
     @Select("select aTagName from AccountTag where aTagName like #{aTagName}")
     List<String> getAccountTagATagNameByATagName(String aTagName);
 

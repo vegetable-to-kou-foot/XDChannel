@@ -1,5 +1,7 @@
 package cn.edu.xidian.service.impl;
 
+import cn.edu.xidian.dao.AccountDao;
+import cn.edu.xidian.dao.AccountTagDao;
 import cn.edu.xidian.dao.UserInfoDao;
 import cn.edu.xidian.domain.FindUserRequest;
 import cn.edu.xidian.domain.UserInfo;
@@ -19,16 +21,19 @@ import java.util.*;
 /**
  * Created by 胡广鹏 on 2020/5/14 21:24
  */
-@Service("userServiceImpl")
+@Service("userInfoService")
 public class UserInfoServiceImpl implements UserInfoService {
 
     @Autowired
     private UserInfoDao userInfoDao;
+    @Autowired
+    private AccountDao accountDao;
 
     @Override
-    public void updateUserInfoProfilePicByAid(Integer aid, MultipartFile upload, HttpServletRequest request) {
+    public void updateUserInfoProfilePicByAid(Integer aid, MultipartFile upload) {
         //todo:搬到服务器上的时候需要修改
-        String filePath = "F:\\WEB_Developing\\XDChannel\\src\\main\\webapp\\images\\"; //定义上传文件的存放位置
+        String filePath = "D:\\TomcatImages\\"; //定义上传文件的存放位置
+        String serverBase = "https://39.99.203.158:8443/XDChannel/images/";
         String fileName = upload.getOriginalFilename();  //获取上传文件的名字
         //判断文件夹是否存在,不存在则创建
         File file = new File(filePath);
@@ -36,11 +41,10 @@ public class UserInfoServiceImpl implements UserInfoService {
             file.mkdirs();
         }
 
-        String newFilePath = filePath + UUID.randomUUID() + fileName; //新文件的路径
-
+        String newFileName = UUID.randomUUID() + fileName; //新文件的路径
         try {
-            upload.transferTo(new File(newFilePath));  //将传来的文件写入新建的文件
-
+            upload.transferTo(new File(filePath+newFileName));  //将传来的文件写入新建的文件
+            userInfoDao.updateUserInfoProfilePicByAid(aid,serverBase+newFileName);
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
@@ -63,15 +67,21 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public List<Integer> findUser(FindUserRequest fur) {
+        System.out.println("In findUser.");
         List<UserInfo> ansTmp = new ArrayList<>(Collections.emptyList());
         List<Integer> ans = new ArrayList<>(Collections.emptyList());
         //用userInfo过滤一次
         List<UserInfo> userInfoList = userInfoDao.findUserInfoAll();
+        System.out.println("Select all successfully.");
+        System.out.println("fur.getUserInfo:"+fur.getUserInfo());
         JSONObject baseUserInfo = JSON.parseObject(fur.getUserInfo());
+        System.out.println("Parse object successfully.");
         for (UserInfo ui : userInfoList){
             JSONObject nowUserInfo = JSON.parseObject(ui.getUserInfo());
+            System.out.println("Parse ui to object successfully.");
             if (JSONAContainsB(nowUserInfo,baseUserInfo)){
                 ansTmp.add(ui);
+                System.out.println("Add ui to list successfully.");
             }
         }
 
@@ -104,8 +114,16 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     private boolean JSONAContainsB(JSONObject A, JSONObject B){
+        if (B.size() == 0)return true;
+        if (A.size() == 0)return false;
         for (Map.Entry<String, Object> entry : B.entrySet()){
-            if (!(A.containsKey(entry.getKey()) && A.get(entry.getKey()) == B.get(entry.getKey()))){
+            String key = entry.getKey();
+            System.out.println("key:"+key);
+            System.out.println("contains:"+A.containsKey(key));
+            System.out.println("A[key]:"+A.get(key));
+            System.out.println("B[key]:"+B.get(key));
+
+            if (!(A.containsKey(key) && A.get(key)!=null && A.get(key).equals(B.get(key)))){
                 return false;
             }
         }
@@ -114,6 +132,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 
     private boolean JSONAAccordB(JSONObject target, JSONArray cond){
+        if (cond == null||cond.size() == 0)return true;
+        if (target == null || target.size() == 0)return false;
         boolean ans = false;
         for (int i=0;i<cond.size();i++){
             JSONObject c = cond.getJSONObject(i);
@@ -141,4 +161,31 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
         return ans;
     }
+
+    public List<JSONObject> getUserInfoByAidList(List<Integer> aidList){
+        if (aidList.size() == 0)return Collections.emptyList();
+        List<UserInfo> userInfos = userInfoDao.findUserInfoByAidList(aidList);
+        List<String> userNames = accountDao.findAccountAccNameByAidList(aidList);
+        List<JSONObject> jsonObjects = new ArrayList<>(Collections.emptyList());
+        for(int i = 0;i < aidList.size();i++){
+            UserInfo userInfo = userInfos.get(i);
+            String userName = userNames.get(i);
+            JSONObject tmp = new JSONObject();
+            tmp.put("userName",userName);
+            tmp.put("aid",userInfo.getAid());
+            tmp.put("userInfo",JSONObject.parseObject(userInfo.getUserInfo()));
+            tmp.put("profilePic",userInfo.getProfilePic());
+            JSONObject userTagsTmp = JSONObject.parseObject(userInfo.getUserTag());
+            List<JSONObject> userTagsList = new ArrayList<>(Collections.emptyList());
+            for (Map.Entry<String,Object> entry:userTagsTmp.entrySet()){
+                JSONObject tmpTmp = new JSONObject();
+                tmpTmp.put(entry.getKey(),entry.getValue());
+                userTagsList.add(tmpTmp);
+            }
+            tmp.put("userTag",userTagsList);
+            jsonObjects.add(tmp);
+        }
+        return jsonObjects;
+    }
+
 }

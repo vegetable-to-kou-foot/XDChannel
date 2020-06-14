@@ -39,4 +39,13 @@ public interface UserInfoDao {
 
     @Select("select * from UserInfo")
     List<UserInfo> findUserInfoAll();
+
+    @Select({
+            "<script>" +
+                    "select * from UserInfo where aid in " +
+                    "<foreach item = 'aidItem' index = 'index' collection = 'aidList' open='(' separator=',' close=')'>" +
+                    "#{aidItem}" +
+                    "</foreach>"+
+                    "</script>"})
+    List<UserInfo> findUserInfoByAidList(@Param("aidList") List<Integer> aidList);
 }
